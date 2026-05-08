@@ -1,0 +1,193 @@
+const User = require("../model/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const transporter = require("../config/transporter");
+require("dotenv").config();
+
+async function signupController(req, res){
+
+    try{
+        const {firstName, lastName, email, password, confirmPassword} = req.body;
+
+        //empty field validation check
+        if(!firstName || !lastName || !email || !password || !confirmPassword){
+            return res.json({
+                success: false,
+                message: "All fields are required."
+            })
+        }
+
+        //firstname validation
+        if(firstName){
+            if(firstName.trim().length < 2){
+                return res.status(400).json({
+                    success:false,
+                    message:"First name must contain at least 2 characters"
+                });
+            }
+        }
+
+        // last name validation
+        if(lastName){
+            if(lastName.trim().length < 2){
+                return res.status(400).json({
+                    success:false,
+                    message:"Last name must contain at least 2 characters"
+                });
+            }
+        }
+
+        //email format validation check
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailRegex.test(email)){
+            return res.json({
+                success:false,
+                message:"Invalid email format"
+            });
+        }
+
+        //password validation check
+        if(password.length < 6){
+            return res.json({
+                success:false,
+                message:"Password must be at least 6 characters"
+            });
+        }
+
+        //password and confirm password check
+        if(password !== confirmPassword){
+            return res.json({
+                success: false,
+                message: "confirm password doesn't match"
+            })
+        }
+
+        //existing user check
+        const existingUser = await User.findOne({email});
+        if(existingUser){
+            return res.json({
+                success: false,
+                message: "Email id already exists!"
+            })
+        }
+
+        
+        let hashedPassword;
+        try{
+            hashedPassword = await bcrypt.hash(password.trim(),10);
+        }
+        catch(error){
+            return res.json({
+                success: false,
+                message: "Error in hashing password"
+            });
+        }
+
+        //valid user -> create entry in db
+        const user = await User.create({firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), password: hashedPassword});
+
+        await transporter.sendMail({
+            from: process.env.MAIL_USER,
+            to: email,
+            subject: "Welcome to DevConnect 🎉",
+            html: `
+                <h2>Welcome to DevConnect 🚀</h2>
+
+                <p>
+                    Your account has been created successfully.
+                </p>
+
+                <p>
+                    We're excited to have you on board!
+                </p>
+
+                <p>
+                    Happy Coding 💻
+                </p>
+            `
+        });
+
+        return res.json({
+            success: true,
+            message: "User signed up successfully!"
+        })
+
+    }
+    catch(error){
+        res.json({
+            success: false,
+            message: "internal server error!",
+            data : error
+        })
+    }
+}
+
+async function loginController(req, res){
+
+    try{
+
+        const {email,password} = req.body;
+
+        if(!email || !password){
+            return res.json({
+                success:false,
+                message: "enter all details"
+            })
+        }
+
+        const user = await User.findOne({email: email.trim()});
+        if(!user){
+            return res.json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        if (await bcrypt.compare(password, user.password)) {
+            const payload = {id: user._id};
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "2h"});
+            const options = {
+                expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+                httpOnly: true 
+            };
+            return res.cookie("token", token, options).json({
+                success: true,
+                message: "User logged in successfully!",
+                token: token
+            });
+        } 
+        else {
+            return res.json({
+                success: false,
+                message: "Password doesn't match!"
+            });
+        }
+    }
+    catch(error){
+        return res.json({
+            success: false,
+            message: "internal server error!",
+            data: error.message
+        })
+    }
+}
+
+
+function logoutController(req, res){
+
+    try{
+        res.clearCookie("token");
+        return res.json({
+            success:true,
+            message:"logged out successfully!"
+        })
+    }
+    catch(error){
+        return res.json({
+            success: false,
+            message: "internal server error!"
+        })
+    }
+}
+
+module.exports = {signupController, loginController, logoutController};
