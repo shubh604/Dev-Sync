@@ -28,6 +28,8 @@ async function updateProfileController(req,res){
             })
         }
 
+        
+
         if(firstName){
             if(firstName.trim().length < 2){
                 return res.json({
@@ -95,10 +97,12 @@ async function updateProfileController(req,res){
         // save updated user
         await user.save();
 
+        const frontendUser = await User.findById(userId).select("-password");
+
         return res.json({
             success:true,
             message:"Changes updated successfully",
-            user
+            user : frontendUser
         });
 
     }
@@ -183,10 +187,12 @@ async function changePasswordController(req,res){
 
         await user.save();
 
+        const frontendUser = await User.findById(userId).select("-password");
+
         return res.json({
             success: true,
             message: "Password updated successfully!",
-            data: user
+            user : frontendUser
         })
     }
     catch(error){
@@ -244,7 +250,8 @@ async function forgotPasswordController(req,res){
 
         return res.json({
             success: true,
-            message:"Reset link sent to email"
+            message:"Reset link sent to email",
+            user:null
         })
 
 
@@ -263,6 +270,8 @@ async function resetPasswordController(req,res){
         
         //1. fetch details
         const {token,newPassword,confirmPassword} = req.body;
+
+        console.log("token: ",token , "new pass: ", newPassword, "confirm: " , confirmPassword);
 
         //2. empty validation
         if(!token || !newPassword || !confirmPassword){
@@ -320,29 +329,12 @@ async function resetPasswordController(req,res){
         }
 
         user.password = hashedPassword;
-
-        await transporter.sendMail({
-            from: process.env.MAIL_USER,
-            to: user.email,
-            subject: "Password Reset Successful",
-            html: `
-                <h2>Password Reset Successful</h2>
-
-                <p>
-                    Your password has been reset successfully.
-                </p>
-
-                <p>
-                    If this wasn't you, please secure your account immediately.
-                </p>
-            `
-        });
-
         await user.save();
 
         return res.json({
             success: true,
-            message: "Password reset successful"
+            message: "Password reset successful",
+            user : null
         })
         
 

@@ -9,6 +9,12 @@ app.use(cookieParser());
 const fileUpload = require("express-fileupload");
 app.use(fileUpload({useTempFiles:true,tempFileDir:"/tmp/"}));
 
+const cors = require("cors");
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}));
+
 app.get('/' , (req,res)=>console.log("Oye Welcome h ji!"));
 
 const database_connection = require("./config/database");

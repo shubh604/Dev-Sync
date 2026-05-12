@@ -1,31 +1,5 @@
 const Connection = require("../model/connectionSchema");
 
-async function getConnections(req,res){
-    try{
-
-    }
-    catch(error){
-        res.json({
-            success: false,
-            message:"Internal server error",
-            error:error.message
-        })
-    }
-}
-
-async function getFeed(req,res){
-    try{
-
-    }
-    catch(error){
-        res.json({
-            success: false,
-            message:"Internal server error",
-            error:error.message
-        })
-    }
-}
-
 //button - send connection request
 async function sendRequest(req,res){
     try{
@@ -162,6 +136,7 @@ async function getpendingRequest(req,res){
     }
 }
 
+//pending requests mei jaake accept krna request ko
 async function acceptRequest(req,res){
     try{
 
@@ -171,7 +146,6 @@ async function acceptRequest(req,res){
 
         // find pending request
         const connection = await Connection.findOne({
-
             fromUser,
             toUser: currentUser,
             status: "pending"
@@ -206,6 +180,7 @@ async function acceptRequest(req,res){
     }
 }
 
+// pending requests mei jaake delete krdi request
 async function deleteRequest(req,res){
     try{
     
@@ -243,31 +218,16 @@ async function deleteRequest(req,res){
     }
 }
 
+// jisne request bheji thi usne sent requests mei jaake cancel request kr diya
 async function cancelRequest(req,res){
     try{
-
-    }
-    catch(error){
-        res.json({
-            success: false,
-            message:"Internal server error",
-            error:error.message
-        })
-    }
-}
-
-async function removeConnection(req,res){
-    try{
-
         const currentUser = req.user.id;
-
         const toUser = req.params.userId;
 
-        // delete sent pending request
         const connection = await Connection.findOneAndDelete({
 
-            fromUser: currentUser,
-            toUser,
+            fromUser : currentUser,
+            toUser: toUser,
             status:"pending"
 
         });
@@ -285,6 +245,110 @@ async function removeConnection(req,res){
         })
 
     }
+    catch(error){
+        res.json({
+            success: false,
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+//koi connection h usse remove krna h
+async function removeConnection(req,res){
+    try{
+
+        const currentUser = req.user.id;
+
+        const toUser = req.params.userId;
+
+        // delete sent pending request
+        const connection = await Connection.findOneAndDelete({
+
+            fromUser: currentUser,
+            toUser,
+            status:"accepted"
+
+        });
+
+        if(!connection){
+            return res.json({
+                success:false,
+                message:"Request not found"
+            })
+        }
+
+        return res.json({
+            success:true,
+            message:"Request cancelled successfully"
+        })
+
+    }
+    catch(error){
+        res.json({
+            success: false,
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+async function getConnections(req,res){
+    try{
+        const currentUser = req.user.id;
+
+        const connections = await Connection.find({
+        $or: [
+            { fromUser: currentUser },
+            { toUser: currentUser }
+        ],
+        status: "accepted"
+        }).populate("fromUser toUser", "-password");
+
+        // always other person ka data return karo
+        const people = connections.map(c =>
+        c.fromUser._id.toString() === currentUser.toString()
+            ? c.toUser
+            : c.fromUser
+        );
+
+        return res.json({ success: true, connections: people });
+    }
+    catch(error){
+        res.json({
+            success: false,
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+    
+async function getFeed(req,res){
+    try{
+        const currentUser = req.user.id;
+
+        // sirf accepted connections find karo
+        const connections = await Connection.find({
+        $or: [
+            { fromUser: currentUser },
+            { toUser: currentUser }
+        ],
+        status: "accepted"
+        });
+
+        // accepted walo ko exclude karo + apne aap ko
+        const excludeIds = new Set([currentUser.toString()]);
+        connections.forEach(c => {
+        excludeIds.add(c.fromUser.toString());
+        excludeIds.add(c.toUser.toString());
+        });
+
+        const users = await User.find({
+        _id: { $nin: Array.from(excludeIds) }
+        }).select("-password");
+
+        return res.json({ success: true, users });
+    }   
     catch(error){
         res.json({
             success: false,

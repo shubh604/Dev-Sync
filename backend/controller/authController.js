@@ -9,8 +9,11 @@ async function signupController(req, res){
     try{
         const {firstName, lastName, email, password, confirmPassword} = req.body;
 
+         console.log("signup called");
+
         //empty field validation check
         if(!firstName || !lastName || !email || !password || !confirmPassword){
+            console.log("empty form");
             return res.json({
                 success: false,
                 message: "All fields are required."
@@ -109,7 +112,8 @@ async function signupController(req, res){
 
         return res.json({
             success: true,
-            message: "User signed up successfully!"
+            message: "User signed up successfully!",
+            user : null
         })
 
     }
@@ -135,6 +139,14 @@ async function loginController(req, res){
             })
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailRegex.test(email)){
+            return res.json({
+                success:false,
+                message:"Invalid email format"
+            });
+        }
+
         const user = await User.findOne({email: email.trim()});
         if(!user){
             return res.json({
@@ -142,6 +154,8 @@ async function loginController(req, res){
                 message:"User not found"
             })
         }
+
+        const frontendUser = await User.findOne({email: email.trim()}).select("-password");
 
         if (await bcrypt.compare(password, user.password)) {
             const payload = {id: user._id};
@@ -153,13 +167,14 @@ async function loginController(req, res){
             return res.cookie("token", token, options).json({
                 success: true,
                 message: "User logged in successfully!",
-                token: token
+                token: token,
+                user: frontendUser
             });
         } 
         else {
             return res.json({
                 success: false,
-                message: "Password doesn't match!"
+                message: "Password doesn't match!",
             });
         }
     }
@@ -179,7 +194,8 @@ function logoutController(req, res){
         res.clearCookie("token");
         return res.json({
             success:true,
-            message:"logged out successfully!"
+            message:"logged out successfully!",
+            user : null
         })
     }
     catch(error){
