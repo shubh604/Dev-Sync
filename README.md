@@ -1,2 +1,2 @@
 # Dev-Sync
-A collaborative platform for developers featuring authentication, profiles, real-time communication, discussions, and collaborative coding.
+MERN stack collaboration platform with JWT authentication, profile management, and Cloudinary integration
