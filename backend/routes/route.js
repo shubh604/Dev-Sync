@@ -8,6 +8,8 @@ const {signupController, loginController, logoutController} = require("../contro
 const {updateProfileController,changePasswordController,forgotPasswordController,resetPasswordController} = require("../controller/profileController");
 const {getConnections, getFeed, getsentRequest, getpendingRequest,sendRequest,acceptRequest,deleteRequest,cancelRequest,removeConnection} = require("../controller/requestController");
 
+const {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts} = require("../controller/helpPostController");
+
 router.post("/signup" , signupController);
 router.post("/login" , loginController);
 router.put("/logout" , authentication, logoutController);
@@ -28,7 +30,10 @@ router.delete("/profile/request/delete/:userId" , authentication , deleteRequest
 router.delete('/profile/request/cancel/:userId',    authentication, cancelRequest);
 router.delete('/profile/connection/remove/:userId', authentication, removeConnection);
 
-
+router.post("/profile/help-board/create", authentication, CreateHelpPost);
+router.get("/profile/help-board/help-feed", authentication, GetHelpPosts);
+router.get("/profile/help-board/my-posts", authentication, GetMyPosts);
+router.delete("/profile/help-board/delete/:postId", authentication, DeleteHelpPost);
 
 
 

@@ -16,7 +16,7 @@ async function signupController(req, res){
             console.log("empty form");
             return res.json({
                 success: false,
-                message: "All fields are required."
+                message: "All fields are required except Last Name."
             })
         }
 
