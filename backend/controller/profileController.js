@@ -16,9 +16,13 @@ async function upload_file_to_cloudinary(file, folder) {
 async function updateProfileController(req,res){
 
     try{
+        console.log("profile update controlle");
         const userId = req.user.id;
 
-        const{firstName, lastName, bio, skills}= req.body || {};
+        const{firstName, lastName, bio}= req.body ;
+        const skills = JSON.parse(req.body.skills);
+
+        console.log("firstname: ",firstName ,"lastName: ", lastName ,"bio: ", bio ,"skills: ",skills);
 
         const user = await User.findById(userId);
         if(!user){
@@ -38,6 +42,7 @@ async function updateProfileController(req,res){
                 });
             }
             user.firstName = firstName.trim();
+            console.log("updated firstname: " , user.firstName);
         }
 
         // last name validation
@@ -48,9 +53,11 @@ async function updateProfileController(req,res){
                     success:false,
                     message:"Last name must contain at least 2 characters"
                 });
+                
             }
 
             user.lastName = lastName.trim();
+            console.log("updated LASTNAME: " , user.lastName);
         }
 
         // bio validation
@@ -62,6 +69,7 @@ async function updateProfileController(req,res){
                 });
             }
             user.bio = bio.trim();
+            console.log("updated bio: " , user.bio);
         }
 
         // skills validation
@@ -69,17 +77,22 @@ async function updateProfileController(req,res){
             user.skills = skills
                 .map(skill => skill.trim())
                 .filter(skill => skill.length > 0);
+
+            console.log("ipdated skills: " ,user.skills);
         }
 
         // profile image upload
         if(req.files && req.files.profilePic){
-
-            const profilePic = req.files.profilePic;
+            console.log("profile");
+            let profilePic = req.files.profilePic;
+            if (Array.isArray(profilePic)) {
+            profilePic = profilePic[0];
+            }
 
             const supported_types = [".jpg", ".jpeg", ".png"];
 
             const pathModule = require("path");
-            let extension = pathModule.extname(profilePic.name).toLowerCase();
+            const extension = pathModule.extname(profilePic.name).toLowerCase();
 
             if (!supported_types.includes(extension)) {
                 return res.json({

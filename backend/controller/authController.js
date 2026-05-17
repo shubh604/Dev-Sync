@@ -12,7 +12,7 @@ async function signupController(req, res){
          console.log("signup called");
 
         //empty field validation check
-        if(!firstName || !lastName || !email || !password || !confirmPassword){
+        if(!firstName || !email || !password || !confirmPassword){
             console.log("empty form");
             return res.json({
                 success: false,

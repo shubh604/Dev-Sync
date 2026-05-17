@@ -20,11 +20,28 @@ function authentication(req,res, next){
             console.log("payload" , payload);
         }
         catch(error){
-            return res.json({
+
+            if(error.name === "TokenExpiredError"){
+
+                return res.status(401).json({
+                    success:false,
+                    message:"Token expired"
+                });
+            }
+
+            if(error.name === "JsonWebTokenError"){
+
+                return res.status(401).json({
+                    success:false,
+                    message:"Invalid token"
+                });
+            }
+
+            return res.status(500).json({
                 success:false,
-                message:"invalid token"
-            })
-        }
+                message:"Authentication failed"
+            });
+            }
 
         next();
 

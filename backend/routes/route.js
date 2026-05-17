@@ -17,16 +17,16 @@ router.put("/profile/change-password" , authentication, changePasswordController
 router.post("/forgot-password", forgotPasswordController);
 router.post("/reset-password", resetPasswordController);
 
-router.get("/connections", authentication, getConnections);
-router.get("/feed", authentication, getFeed);
-router.get("/requests/sent" , authentication , getsentRequest);
-router.get("/requests/pending" , authentication , getpendingRequest);
+router.get("/profile/connections", authentication, getConnections);
+router.get("/profile/feed", authentication, getFeed);
+router.get("/profile/requests/sent" , authentication , getsentRequest);
+router.get("/profile/requests/pending" , authentication , getpendingRequest);
 
-router.post("/request/send/:userId" , authentication , sendRequest);
-router.post("/request/accept/:userId" , authentication , acceptRequest);
-router.delete("/request/delete/:userId" , authentication , deleteRequest);
-router.delete('/request/cancel/:userId',    authentication, cancelRequest);
-router.delete('/connection/remove/:userId', authentication, removeConnection);
+router.post("/profile/request/send/:userId" , authentication , sendRequest);
+router.post("/profile/request/accept/:userId" , authentication , acceptRequest);
+router.delete("/profile/request/delete/:userId" , authentication , deleteRequest);
+router.delete('/profile/request/cancel/:userId',    authentication, cancelRequest);
+router.delete('/profile/connection/remove/:userId', authentication, removeConnection);
 
 
 

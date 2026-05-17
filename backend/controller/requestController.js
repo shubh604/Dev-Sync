@@ -1,4 +1,5 @@
 const Connection = require("../model/connectionSchema");
+const User = require("../model/User");
 
 //button - send connection request
 async function sendRequest(req,res){
@@ -54,8 +55,7 @@ async function sendRequest(req,res){
 
         return res.json({
             success:true,
-            message:"Request sent successfully",
-            connection
+            message:"Your request has been successfully sent!",
         })
     }
     catch(error){
@@ -68,6 +68,7 @@ async function sendRequest(req,res){
 }
 
 //button - sent requests
+//return array of people to whom requests has been sent.
 async function getsentRequest(req,res){
     try{
         const userId = req.user.id;
@@ -81,15 +82,16 @@ async function getsentRequest(req,res){
 
         // get all sent requests
         const requests = await Connection.find({
-
             fromUser: userId,
             status: "pending"
+        }).populate("toUser", "-password");
 
-        }).populate("toUser");
+        const people = requests.map((request) => request.toUser);
 
         return res.json({
             success:true,
-            sentRequests: requests
+            message: "Sent Requests have been Updated Successfully!",
+            data: people
         })
 
     }
@@ -103,6 +105,8 @@ async function getsentRequest(req,res){
 }
 
 // button - pending requests
+
+//returns an array of people who have sent requests to the curr user.
 async function getpendingRequest(req,res){
     try{
         const currUserId = req.user.id;
@@ -120,11 +124,14 @@ async function getpendingRequest(req,res){
             toUser : currUserId,
             status: "pending"
 
-        }).populate("fromUser");
+        }).populate("fromUser","-password");
+
+        const people = requests.map((request) => request.fromUser);
 
         return res.json({
             success:true,
-            sentRequests: requests
+            message : "Pending Requests have been Updated Successfully!",
+            data : people
         })
     }
     catch(error){
@@ -166,8 +173,7 @@ async function acceptRequest(req,res){
 
         return res.json({
             success:true,
-            message:"Request accepted successfully",
-            connection
+            message:"Request has been accepted successfully!",
         })
 
     }
@@ -206,7 +212,7 @@ async function deleteRequest(req,res){
 
         return res.json({
             success:true,
-            message:"Request deleted successfully"
+            message:"Request has been deleted successfully!"
         })
     }
     catch(error){
@@ -241,7 +247,7 @@ async function cancelRequest(req,res){
 
         return res.json({
             success:true,
-            message:"Request cancelled successfully"
+            message:"Request has been cancelled successfully!"
         })
 
     }
@@ -265,22 +271,34 @@ async function removeConnection(req,res){
         // delete sent pending request
         const connection = await Connection.findOneAndDelete({
 
-            fromUser: currentUser,
-            toUser,
-            status:"accepted"
+            $or: [
 
+                {
+                    fromUser: currentUser,
+                    toUser: toUser
+                },
+
+                {
+                    fromUser: toUser,
+                    toUser: currentUser
+                }
+
+            ],
+
+            status: "accepted"
         });
+
 
         if(!connection){
             return res.json({
                 success:false,
-                message:"Request not found"
+                message:"Connection not found"
             })
         }
 
         return res.json({
             success:true,
-            message:"Request cancelled successfully"
+            message:"Connection has been removed successfully"
         })
 
     }
@@ -293,6 +311,20 @@ async function removeConnection(req,res){
     }
 }
 
+
+//connections mei check kro jismei to user , ya from user , curr user hai. 
+//ab un connections mei se jinka statsus accepted h vo honge connections.
+//ab in connections mei jo accepted hai, us mei agar to user : curr user hai , to from user return kro 
+//aur agar from user : curr user hai , to to user return kro.
+
+//returning an array of connected people like : [ {
+    //      _id: "123",
+    //      firstName: "Shubh",
+    //      lastName: "Kaur",
+    //      email: "abc@gmail.com",
+    //      profilePic: "...",
+    //      connectionStatus: "connect"
+    //   }, {} , {}]
 async function getConnections(req,res){
     try{
         const currentUser = req.user.id;
@@ -312,7 +344,7 @@ async function getConnections(req,res){
             : c.fromUser
         );
 
-        return res.json({ success: true, connections: people });
+        return res.json({ success: true, message:"Connections have been Fetched Successfully!", data: people });
     }
     catch(error){
         res.json({
@@ -322,39 +354,89 @@ async function getConnections(req,res){
         })
     }
 }
+
+
+//mtlb pehle saare connections leke aayi mai jo bhi curr user ke h..chahe sirf usse req bheji h ya usse connected h,
+//  then map mei aagya jin jin se vo connection mei h + status, then user ki list mei curr user hta ke saare users aaye,
+//  then in sb users mei agar vo connection map mei h, to mtlb vo obv accepted ya pending hoga. 
+// To accepted h to kuch na kro (feed mei mt dikhao), pending h to same status ke saath store kro, 
+// aur agar map mei nhi h to "connect" status ke saath store kro.
+
+//returning an array of all people like : [ {
+    //      _id: "123",
+    //      firstName: "Shubh",
+    //      lastName: "Kaur",
+    //      email: "abc@gmail.com",
+    //      profilePic: "...",
+    //      connectionStatus: "connect"
+    //   }, {} , {}]
+    // agar connectd hai to connectionstatus -> chat , agar request bheji h ya aayi hui h to ->pending, agar kuch ni h to ->connect
+
+async function getFeed(req, res) {
+
+    try {
+
     
-async function getFeed(req,res){
-    try{
+
+        // logged in user
         const currentUser = req.user.id;
 
-        // sirf accepted connections find karo
         const connections = await Connection.find({
-        $or: [
-            { fromUser: currentUser },
-            { toUser: currentUser }
-        ],
-        status: "accepted"
+            $or: [
+                { fromUser: currentUser },
+                { toUser: currentUser }
+            ]
         });
 
-        // accepted walo ko exclude karo + apne aap ko
-        const excludeIds = new Set([currentUser.toString()]);
-        connections.forEach(c => {
-        excludeIds.add(c.fromUser.toString());
-        excludeIds.add(c.toUser.toString());
+
+        const connectionMap = new Map();
+
+        connections.forEach((conn) => {
+            let otherUser;
+            if (conn.fromUser.toString() === currentUser.toString()) {
+                otherUser = conn.toUser.toString();
+            } else {
+                otherUser = conn.fromUser.toString();
+            }
+            connectionMap.set(otherUser, conn.status);
         });
 
         const users = await User.find({
-        _id: { $nin: Array.from(excludeIds) }
+            _id: { $ne: currentUser }
         }).select("-password");
 
-        return res.json({ success: true, users });
-    }   
-    catch(error){
-        res.json({
+        const feed = users.map((user) => {
+
+            let status =
+                connectionMap.get(user._id.toString()) || "Let's Connect!";
+            
+                if(status==="accepted"){
+                    status="Let's chat!";
+                }
+                else if(status==="pending"){
+                    status="Request Pending!";
+                }
+            return {
+                ...user.toObject(),
+                connectionStatus: status
+            };
+        });
+
+        return res.json({
+            success: true,
+            message: "feed have been fetched successfully!",
+            data : feed
+        });
+
+    }
+    catch (error) {
+
+        return res.status(500).json({
+
             success: false,
-            message:"Internal server error",
-            error:error.message
-        })
+            message: "Internal server error",
+            error: error.message
+        });
     }
 }
 

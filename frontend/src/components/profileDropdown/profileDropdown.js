@@ -19,7 +19,7 @@ function ProfileDropDown(props){
         <div>
 
             <NavLink to="/profile/my-profile" onClick={clickHandler} >My Profile</NavLink>
-            <NavLink to="/profile/edit-profile" onClick={clickHandler}>Edit Profile</NavLink>
+            <NavLink to="/profile/change-password" onClick={clickHandler}>Change Password</NavLink>
             <p onClick={()=>{logoutclickHandler();clickHandler();}}>Logout</p>
             
             

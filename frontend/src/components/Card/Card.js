@@ -1,14 +1,20 @@
-
+import { useNavigate } from "react-router-dom";
+import "./Card.css"
 
 function Card(props){
 
+    const navigate = useNavigate();
+
+    function editButtonHandler(){
+        navigate("/profile/edit-profile");
+    }
 
     return(
 
         <div>
 
-            <div>
-                <img src={props.obj.profilePic}></img>
+            <div className="outer">
+                {props.obj.profilePic ? (<img className="image" src={props.obj.profilePic}></img>)  : (<div className="image">{props.obj?.firstName?.charAt(0).toUpperCase()}</div>)}   
             </div>
 
             <p>{props.obj.firstName}{props.obj.lastName}</p>
@@ -25,7 +31,8 @@ function Card(props){
                 ))
             }
 
-            <button>{props.buttonType}</button>
+            <br/><br/><br/><br/>
+            {props.buttonType==="Edit Profile" && <button onClick={editButtonHandler}>Edit Profile</button>}
 
         </div>
 

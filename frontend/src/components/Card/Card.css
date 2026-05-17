@@ -1,0 +1,13 @@
+
+.image{
+    height:150px;
+    width:150px;
+    background-color: rgb(94, 79, 79);
+    display: flex;
+    justify-content: center;
+}
+
+.outer{
+    width :1000px;
+    margin: 0 auto;
+}

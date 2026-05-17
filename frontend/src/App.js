@@ -18,6 +18,7 @@ import {AppContext} from "./context/appContext";
 import axios from "axios";
 import MyProfile from './components/myProfile/MyProfile';
 import EditProfile from './components/EditProfile/EditProfile';
+import ChangePassword from './components/ChangePassword/ChangePassword';
 
 function App() {
 
@@ -71,11 +72,12 @@ useEffect(()=>{
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />}></Route>
             <Route path='/reset-password/:token' element={<ResetPassword />}></Route>
-            <Route path='/profile-feed' element={<Feed />}></Route>
-            <Route path='/profile-connections' element={<Connections />}></Route>
+            <Route path='/profile/feed' element={<Feed />}></Route>
+            <Route path='/profile/connections' element={<Connections />}></Route>
 
             <Route path="/profile/my-profile" element={<MyProfile/>}></Route>
             <Route path='/profile/edit-profile' element={<EditProfile/>}></Route>
+            <Route path='/profile/change-password' element={<ChangePassword />}></Route>
       
         </Routes>
 
