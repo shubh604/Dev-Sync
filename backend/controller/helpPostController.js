@@ -156,88 +156,162 @@ async function GetMyPosts(req,res){
 }
 
 async function GetHelpPosts(req,res){
+
     try{
 
         const currentUser = req.user.id;
 
         // check user exists or not
+
         const userExists = await User.findById(currentUser);
-        if (!userExists) {
+
+        if(!userExists){
+
             return res.status(404).json({
-                success: false,
-                message: "User not found"
+
+                success:false,
+
+                message:"User not found"
             });
         }
 
-        // fetch all posts except current user's posts
+        // fetch all help posts except current user's posts
+
         const posts = await HelpPost.find({
-            createdBy: { $ne: currentUser }
-        }).populate("createdBy", "-password").sort({ createdAt: -1 });
 
-        // no posts found in feed
-        if (posts.length === 0) {
+            createdBy:{ $ne: currentUser }
+
+        })
+
+        .populate("createdBy", "-password")
+
+        .sort({ createdAt:-1 });
+
+        // no posts found
+
+        if(posts.length === 0){
+
             return res.json({
-                success: true,
-                message: "No posts available in the feed right now.",
-                data: []
+
+                success:true,
+
+                message:"No posts available in help hub.",
+
+                data:[]
             });
         }
 
+        // fetch all connections of current user
 
-        //ab posts aa gyi now return the posts + the connection-status of the user with the curr posts
-
-        //1. saare connections le aao jinse curr user connected h 
         const connections = await Connection.find({
-            $or: [
+
+            $or:[
+
                 { fromUser: currentUser },
+
                 { toUser: currentUser }
+
             ]
+
         });
 
-        //2. make a map jismei  =>   user with whom curr user is connected with | conn-status of curr user with that user
+        // create connection map
+
         const connectionMap = new Map();
-            connections.forEach((conn) => {
-                let otherUser;
-                if(conn.fromUser.toString() === currentUser.toString()){
-                    otherUser = conn.toUser.toString();
-                }
-                else{
-                    otherUser = conn.fromUser.toString();
-                }
-                connectionMap.set(otherUser, conn.status);
-            });
 
+        connections.forEach((conn)=>{
 
-            //now posts = all the posts except the posts created by curr user
-            // agar ab in post mei se koi post ka creator map mei hua to uske acc status set krlo
-            const final_posts_with_curr_status_with_user = posts.map((post) => {
+            let otherUser;
 
-                let status =connectionMap.get(post.createdBy._id.toString()) || "Connect";
-                
-                if(status==="pending"){
-                    status = "Pending";
+            let requestType = null;
+
+            // if current user sent request
+
+            if(conn.fromUser.toString() === currentUser.toString()){
+
+                otherUser = conn.toUser.toString();
+
+                requestType = "sent";
+            }
+
+            // if current user received request
+
+            else{
+
+                otherUser = conn.fromUser.toString();
+
+                requestType = "received";
+            }
+
+            connectionMap.set(
+
+                otherUser,
+
+                {
+
+                    status:conn.status,
+
+                    requestType:requestType
                 }
-                else if(status==="accepted"){
-                    status = "Help Now!"
-                }
 
-                return {
-                    ...post.toObject(),
-                    connectionStatus: status
-                };
-            });
-            return res.json({
-                success: true,
-                message: "Feed has been fetched successfully!",
-                data: final_posts_with_curr_status_with_user
-            });
-    }
-    catch(error){
-        
+            );
+
+        });
+
+        // attach connection status with every help post
+
+        const final_posts_with_curr_status_with_user = posts.map((post)=>{
+
+            const connectionData = connectionMap.get(
+
+                post.createdBy._id.toString()
+            );
+
+            let status = "none";
+
+            let requestType = null;
+
+            if(connectionData){
+
+                status = connectionData.status;
+
+                requestType = connectionData.requestType;
+            }
+
+            return{
+
+                ...post.toObject(),
+
+                connectionStatus:status,
+
+                requestType:requestType
+            };
+
+        });
+
         return res.json({
-            success: false,
-            message: "Internal Server Error"
-        })
+
+            success:true,
+
+            message:"Help feed fetched successfully!",
+
+            data:final_posts_with_curr_status_with_user
+        });
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        return res.status(500).json({
+
+            success:false,
+
+            message:"Internal Server Error",
+
+            error:error.message
+        });
     }
 }
 

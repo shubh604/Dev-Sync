@@ -1,109 +1,75 @@
-
-import { useContext, useState , useEffect} from "react";
-import AppContextProvider from "../../context/appContext";
-import {AppContext} from "../../context/appContext";
+import { useContext, useState, useEffect } from "react";
+import { AppContext } from "../../context/appContext";
 import axios from "axios";
-import { NavLink, useAsyncValue, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import "./login.css";
 
+function Login() {
 
-function Login(){
-
-    const [curr,setCurr] = useState({"email" : "", "password":""});
-    const {user,setUser} = useContext(AppContext);
-    const [response,setResponse]= useState("");
+    const [curr, setCurr] = useState({ email: "", password: "" });
+    const { user, setUser } = useContext(AppContext);
+    const [response, setResponse] = useState("");
     const navigate = useNavigate();
 
-    useEffect(()=>{
+    useEffect(() => {
+        if (user) navigate("/");
+    }, [user, navigate]);
 
-        if(user){
-            navigate("/");
-        }
-
-    },[user]);
-
-    
-    function changeHandler(event){
-        setCurr((prev)=>{
-            return{
-                ...prev,
-                [event.target.name] : event.target.value
-            }
+    function changeHandler(event) {
+        setCurr((prev) => {
+            return { ...prev, [event.target.name]: event.target.value }
         })
     }
 
-    async function submitHandler(event){
+    async function submitHandler(event) {
         event.preventDefault();
-
-        try{
-            const res = await axios.post("http://localhost:4500/api/v1/login",curr,{withCredentials:true});
-
-            if(res.data.success===true){
-                
-                console.log("succes:true " ,res.data.message);
-                console.log("user" ,user);
+        try {
+            const res = await axios.post(
+                "http://localhost:4500/api/v1/login",
+                curr,
+                { withCredentials: true }
+            );
+            if (res.data.success === true) {
+                console.log("success:true", res.data.message);
                 setResponse(res.data.message);
-                setTimeout(()=>{setUser(res.data.user);navigate("/")},3000);
-            }
-            else{
-                console.log("succes:false " ,res.data.message);
+                setTimeout(() => { setUser(res.data.user); navigate("/"); }, 3000);
+            } else {
                 setResponse(res.data.message);
             }
-
+        } catch(error) {
+            console.log(error?.response?.data?.message);
+            setResponse(error?.response?.data?.message || "Something went wrong");
         }
-        catch(error){
-            console.log(error.response.data.message);
-            setResponse(error.response.data.message);
-        }
-
     }
 
-    return(
-
-        
-
-        <div>
-
-        
-
-            {!user && 
-
-                
-            <div>
-                <h1>Login Form</h1>
-                <div>
-                    <form onSubmit={submitHandler}>
-
-                        <div>
+    return (
+        <div className="loginPage">
+            {!user &&
+                <div className="loginContainer">
+                    <h1 className="loginHeading">Welcome Back</h1>
+                    <form className="loginForm" onSubmit={submitHandler}>
+                        <div className="inputGroup">
                             <label htmlFor="id1">Email</label>
-                            <input type="text" id="id1" value={curr.email} name="email" onChange={changeHandler} placeholder="Enter your email"></input>
+                            <input type="email" id="id1" value={curr.email} name="email" onChange={changeHandler} placeholder="Enter your email" />
                         </div>
-
-                        <div>
+                        <div className="inputGroup">
                             <label htmlFor="id2">Password</label>
-                            <input type="password" id="id2" value={curr.password} name="password" onChange={changeHandler} placeholder="Enter your passsword"></input>
+                            <input type="password" id="id2" value={curr.password} name="password" onChange={changeHandler} placeholder="Enter your password" />
                         </div>
-                        
-                        <button>Submit</button>
+                        <button className="loginBtn">Login</button>
                     </form>
-
-                    <NavLink to="/forgot-password">Forgot Password?</NavLink>
-                
-                    <div>
-                        <p>Don't have an account? <span><NavLink to="/signup">Signup here</NavLink></span></p>
+                    <div className="extraLinks">
+                        <NavLink className="forgotLink" to="/forgot-password">Forgot Password?</NavLink>
+                        <p className="signupText">Don't have an account? {" "}<NavLink className="signupLink" to="/signup">Signup here</NavLink></p>
                     </div>
-
+                    <div className="responseMessage">
+                        <p>{response}</p>
+                    </div>
                 </div>
-
-                <div><p>{response}</p></div>
-
-            </div>
-                
             }
-
-            
-
         </div>
-    )
+    );
+
 }
 
 export default Login;

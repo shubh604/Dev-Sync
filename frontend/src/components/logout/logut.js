@@ -1,56 +1,55 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/appContext";
 import axios from "axios";
+import "./logout.css";
 
-function Logout(props){
+function Logout(props) {
 
     const navigate = useNavigate();
-    const {user,setUser} = useContext(AppContext);
-    const [response,setResponse] = useState("");
+    const { user, setUser } = useContext(AppContext);
+    const [response, setResponse] = useState("");
 
-    async function yesHandler(){
+    async function yesHandler() {
+        try {
+            const res = await axios.put(
+                "http://localhost:4500/api/v1/logout",
+                {},
+                { withCredentials: true }
+            );
 
-        try{
-            const res = await axios.put("http://localhost:4500/api/v1/logout",{}, {withCredentials:true});
-            console.log("res received" , res);
+            console.log("res received", res);
 
-            if(res.data.success===true){
-
+            if (res.data.success === true) {
                 setUser(null);
-                console.log("succes:true " ,res.data.message);
-                console.log("user" ,user);
                 setResponse(res.data.message);
                 props.setLogoutClick(false);
                 navigate("/");
-            }
-            else{
-                console.log("succes:false " ,res.data.message);
+            } else {
                 setResponse(res.data.message);
             }
-
+        } catch(error) {
+            console.log(error?.response?.data?.message);
+            setResponse(error?.response?.data?.message || "Something went wrong");
         }
-        catch(error){
-            console.log(error.response.data.message);
-            setResponse(error.response.data.message);
-        }
-        
     }
 
-    function cancelHandler(){
+    function cancelHandler() {
         props.setLogoutClick(false);
     }
 
-    return(
-
-       
-            <div>
-                <p>Are you sure u want to log out?</p>
-                <button onClick={yesHandler}>Yes</button>
-                <button onClick={cancelHandler}>cancel</button>
+    return (
+        <div className="logoutOverlay">
+            <div className="logoutBox">
+                <p className="logoutText">Are you sure you want to log out?</p>
+                <div className="logoutBtns">
+                    <button className="yesBtn" onClick={yesHandler}>Yes</button>
+                    <button className="cancelBtn" onClick={cancelHandler}>Cancel</button>
+                </div>
+                <p className="logoutResponse">{response}</p>
             </div>
-        
-    )
+        </div>
+    );
 
 }
 

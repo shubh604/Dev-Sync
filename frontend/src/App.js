@@ -12,6 +12,11 @@ import Feed from './components/feed/feed';
 import Connections from './components/connections/connection';
 import Logout from './components/logout/logut';
 
+import RequestsCards from './components/RequestsCard/RequestsCard';
+import HelpHub from './components/HelpHub/HelpHub';
+import MyHelpHub from './components/MyHelpHub/MyHelpHub';
+
+
 import { useContext ,useEffect, useState} from 'react';
 import AppContextProvider from './context/appContext';
 import {AppContext} from "./context/appContext";
@@ -74,10 +79,17 @@ useEffect(()=>{
             <Route path='/reset-password/:token' element={<ResetPassword />}></Route>
             <Route path='/profile/feed' element={<Feed />}></Route>
             <Route path='/profile/connections' element={<Connections />}></Route>
+            <Route path='/profile/requests/sent' element={<RequestsCards type="sent" />}></Route>
+            <Route path='/profile/requests/pending' element={<RequestsCards type="pending" />}></Route>
+
+            <Route path='/profile/help-hub' element={<HelpHub />}></Route>
+            <Route path="/profile/my-help-hub" element={<MyHelpHub />}></Route>
 
             <Route path="/profile/my-profile" element={<MyProfile/>}></Route>
             <Route path='/profile/edit-profile' element={<EditProfile/>}></Route>
             <Route path='/profile/change-password' element={<ChangePassword />}></Route>
+
+
       
         </Routes>
 

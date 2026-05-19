@@ -4,7 +4,7 @@ const User = require("../model/User");
 //button - send connection request
 async function sendRequest(req,res){
     try{
-
+        console.log("send request controller called");
         const fromUser = req.user.id;
         const toUser = req.params.userId;
 
@@ -357,7 +357,7 @@ async function getConnections(req,res){
 
 
 //mtlb pehle saare connections leke aayi mai jo bhi curr user ke h..chahe sirf usse req bheji h ya usse connected h,
-//  then map mei aagya jin jin se vo connection mei h + status, then user ki list mei curr user hta ke saare users aaye,
+//  then map bnaaya jis mei aagya jin jin se vo connection mei h + status, then all user ki list mei curr user hta ke saare users aaye,
 //  then in sb users mei agar vo connection map mei h, to mtlb vo obv accepted ya pending hoga. 
 // To accepted h to kuch na kro (feed mei mt dikhao), pending h to same status ke saath store kro, 
 // aur agar map mei nhi h to "connect" status ke saath store kro.
@@ -376,66 +376,109 @@ async function getFeed(req, res) {
 
     try {
 
-    
-
-        // logged in user
         const currentUser = req.user.id;
 
         const connections = await Connection.find({
+
             $or: [
+
                 { fromUser: currentUser },
+
                 { toUser: currentUser }
+
             ]
+
         });
 
+        const users = await User.find({
+
+            _id: { $ne: currentUser }
+
+        }).select("-password");
 
         const connectionMap = new Map();
 
         connections.forEach((conn) => {
-            let otherUser;
-            if (conn.fromUser.toString() === currentUser.toString()) {
-                otherUser = conn.toUser.toString();
-            } else {
-                otherUser = conn.fromUser.toString();
-            }
-            connectionMap.set(otherUser, conn.status);
-        });
 
-        const users = await User.find({
-            _id: { $ne: currentUser }
-        }).select("-password");
+            let otherUser;
+
+            let requestType;
+
+            if(conn.fromUser.toString() === currentUser.toString()){
+
+                otherUser = conn.toUser.toString();
+
+                requestType = "sent";
+            }
+
+            else{
+
+                otherUser = conn.fromUser.toString();
+
+                requestType = "received";
+            }
+
+            connectionMap.set(
+
+                otherUser,
+
+                {
+
+                    status: conn.status,
+
+                    requestType: requestType
+                }
+            );
+
+        });
 
         const feed = users.map((user) => {
 
-            let status =
-                connectionMap.get(user._id.toString()) || "Let's Connect!";
-            
-                if(status==="accepted"){
-                    status="Let's chat!";
-                }
-                else if(status==="pending"){
-                    status="Request Pending!";
-                }
+            const connectionData =
+                connectionMap.get(user._id.toString());
+
+            let status = "none";
+
+            let requestType = null;
+
+            if(connectionData){
+
+                status = connectionData.status;
+
+                requestType = connectionData.requestType;
+            }
+
             return {
+
                 ...user.toObject(),
-                connectionStatus: status
+
+                connectionStatus: status,
+
+                requestType: requestType
             };
+
         });
 
         return res.json({
-            success: true,
-            message: "feed have been fetched successfully!",
-            data : feed
+
+            success:true,
+
+            message:"feed fetched successfully",
+
+            data:feed
         });
 
     }
+
     catch (error) {
 
         return res.status(500).json({
 
-            success: false,
-            message: "Internal server error",
-            error: error.message
+            success:false,
+
+            message:"Internal server error",
+
+            error:error.message
         });
     }
 }

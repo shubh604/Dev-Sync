@@ -1,28 +1,51 @@
-import { useState } from "react";
-import MyProfile from "../myProfile/MyProfile";
-import EditProfile from "../EditProfile/EditProfile";
-import Logout from "../logout/logut";
-import { Navigate, NavLink, useLinkClickHandler, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
+import "./profileDropdown.css";
 
 function ProfileDropDown(props){
 
     function clickHandler(){
-       props.setOpenDropdown(false);
+
+        props.setOpenDropdown(false);
+
     }
 
     function logoutclickHandler(){
+
         props.setLogoutClick(true);
+
     }
 
     return(
 
-        <div>
+        <div className="profileDropdown">
 
-            <NavLink to="/profile/my-profile" onClick={clickHandler} >My Profile</NavLink>
-            <NavLink to="/profile/change-password" onClick={clickHandler}>Change Password</NavLink>
-            <p onClick={()=>{logoutclickHandler();clickHandler();}}>Logout</p>
-            
-            
+            <NavLink
+                className="dropdownLink"
+                to="/profile/my-profile"
+                onClick={clickHandler}
+            >
+                My Profile
+            </NavLink>
+
+            <NavLink
+                className="dropdownLink"
+                to="/profile/change-password"
+                onClick={clickHandler}
+            >
+                Change Password
+            </NavLink>
+
+            <p
+                className="logoutText"
+                onClick={()=>{
+                    logoutclickHandler();
+                    clickHandler();
+                }}
+            >
+                Logout
+            </p>
+
         </div>
 
     )

@@ -139,6 +139,8 @@ async function loginController(req, res){
             })
         }
 
+        console.log(email , password);
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
             return res.json({
