@@ -10,6 +10,8 @@ const {getConnections, getFeed, getsentRequest, getpendingRequest,sendRequest,ac
 
 const {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts} = require("../controller/helpPostController");
 
+const {ChatController} = require("../controller/chatController");
+
 router.post("/signup" , signupController);
 router.post("/login" , loginController);
 router.put("/logout" , authentication, logoutController);
@@ -34,6 +36,8 @@ router.post("/profile/help-board/create", authentication, CreateHelpPost);
 router.get("/profile/help-board/help-feed", authentication, GetHelpPosts);
 router.get("/profile/help-board/my-posts", authentication, GetMyPosts);
 router.delete("/profile/help-board/delete/:postId", authentication, DeleteHelpPost);
+
+router.get("/profile/dev-chat/:receiverId", authentication , ChatController);
 
 
 

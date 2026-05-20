@@ -29,6 +29,14 @@ const User = new mongoose.Schema({
     profilePic:{
         type:String,
         default:""
+    },
+    status: {
+        type: String,
+        default: "offline"
+    },
+    lastSeen:{
+        type:Date,
+        default:Date.now()
     }
 
 })

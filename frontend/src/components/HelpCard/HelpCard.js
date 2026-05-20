@@ -1,7 +1,10 @@
 import axios from "axios";
 import "./HelpCard.css";
+import { useNavigate } from "react-router-dom";
 
 function HelpCard(props) {
+
+    const navigate = useNavigate();
 
     async function sendRequestHandler() {
         try {
@@ -60,6 +63,10 @@ function HelpCard(props) {
         }
     }
 
+    function helpnowHandler() {
+        navigate(`/profile/dev-chat/${props.help.createdBy._id}`);
+    }
+
     return (
         <div className="helpCard">
             <div className="helpCardTop">
@@ -92,7 +99,7 @@ function HelpCard(props) {
                     <button className="helpBtn acceptBtn" onClick={acceptRequestHandler}>Accept</button>
                 }
                 {props.help.connectionStatus === "accepted" &&
-                    <button className="helpBtn helpNowBtn">Help Now 🚀</button>
+                    <button className="helpBtn helpNowBtn" onClick={helpnowHandler}>Help Now 🚀</button>
                 }
                 {props.type === "my-help-card" &&
                     <button className="helpBtn deleteBtn" onClick={deleteHelpHandler}>Delete Post</button>

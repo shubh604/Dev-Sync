@@ -48,6 +48,10 @@ function Card(props) {
         }
     }
 
+    async function chatHandler() {
+        navigate(`/profile/dev-chat/${props.obj._id}`);
+    }
+
     return (
         <div className="card">
             <div className="outer">
@@ -87,14 +91,14 @@ function Card(props) {
                         <button className="btn" onClick={acceptRequestHandler}>Accept</button>
                     }
                     {props.obj.connectionStatus === "accepted" &&
-                        <button className="btn">Chat</button>
+                        <button className="btn" onClick={chatHandler}>Dev-Chat</button>
                     }
                 </>
             }
 
             {props.buttonType === "connection" &&
                 <div className="connectionButtons">
-                    <button className="btn">Chat</button>
+                    <button className="btn" onClick={chatHandler}>Dev-Chat</button>
                     <button className="btn removeBtn" onClick={removeConnectionHandler}>Remove Connection</button>
                 </div>
             }

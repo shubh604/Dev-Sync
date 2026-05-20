@@ -15,7 +15,7 @@ import Logout from './components/logout/logut';
 import RequestsCards from './components/RequestsCard/RequestsCard';
 import HelpHub from './components/HelpHub/HelpHub';
 import MyHelpHub from './components/MyHelpHub/MyHelpHub';
-
+import DevChat from './components/DevChat/DevChat';
 
 import { useContext ,useEffect, useState} from 'react';
 import AppContextProvider from './context/appContext';
@@ -25,10 +25,20 @@ import MyProfile from './components/myProfile/MyProfile';
 import EditProfile from './components/EditProfile/EditProfile';
 import ChangePassword from './components/ChangePassword/ChangePassword';
 
+import socket from './socket';
+
 function App() {
 
   const {user,setUser} = useContext(AppContext);
   const [loading,setloading] = useState(true);
+
+  useEffect(() => {
+
+    if(user){
+        socket.emit("join", user._id);
+    }
+
+}, [user]);
 
   //mtlb har refresh pe call hoga, aur agar user logged in hua to user mei user ka data aa jaayega else null rahgea.
   async function fetchingUser(){
@@ -84,6 +94,7 @@ useEffect(()=>{
 
             <Route path='/profile/help-hub' element={<HelpHub />}></Route>
             <Route path="/profile/my-help-hub" element={<MyHelpHub />}></Route>
+            <Route path="/profile/dev-chat/:receiverId" element={<DevChat />}></Route>
 
             <Route path="/profile/my-profile" element={<MyProfile/>}></Route>
             <Route path='/profile/edit-profile' element={<EditProfile/>}></Route>

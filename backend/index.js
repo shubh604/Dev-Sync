@@ -1,4 +1,8 @@
 const express = require("express");
+
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
 
 app.use(express.json());
@@ -27,6 +31,21 @@ const mountRoute = require("./routes/route.js");
 app.use("/api/v1" ,mountRoute);
 
 require("dotenv").config();
-const port = process.env.PORT || 5000;
-app.listen(port , console.log(`Server successfully started at port ${port}`));
 
+const server = http.createServer(app);
+
+const io = new Server(server,{
+    cors:{
+        origin:"http://localhost:3000",
+        credentials:true
+    }
+});
+
+const ChatController = require("./socket");
+ChatController(io);
+
+const port = process.env.PORT || 5000;
+
+server.listen(port , ()=>{
+    console.log(`Server successfully started at port ${port}`);
+});
