@@ -1,0 +1,139 @@
+/* HelpHub.css */
+
+.helpHubPage{
+
+    width:100%;
+
+    min-height:100vh;
+
+    background-color:#f8fafc;
+
+    padding:40px;
+
+    box-sizing:border-box;
+}
+
+.helpHeroSection{
+
+    width:100%;
+
+    background:linear-gradient(
+        to right,
+        #4f46e5,
+        #7c3aed
+    );
+
+    border-radius:28px;
+
+    padding:40px;
+
+    box-sizing:border-box;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:30px;
+
+    color:white;
+
+    margin-bottom:40px;
+}
+
+.heroLeft{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+}
+
+.heroLeft h1{
+
+    margin:0;
+
+    font-size:42px;
+
+    font-weight:700;
+}
+
+.heroLeft p{
+
+    margin:0;
+
+    max-width:650px;
+
+    font-size:17px;
+
+    line-height:30px;
+
+    opacity:0.95;
+}
+
+.myHelpBtn{
+
+    border:none;
+
+    background-color:white;
+
+    color:#4f46e5;
+
+    padding:16px 24px;
+
+    border-radius:16px;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    min-width:220px;
+}
+
+.myHelpBtn:hover{
+
+    transform:translateY(-3px);
+
+    background-color:#eef2ff;
+}
+
+.helpFeedSection{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+}
+
+.feedHeading{
+
+    font-size:34px;
+
+    color:#111827;
+
+    margin:0;
+}
+
+.helpFeedContainer{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+
+    gap:28px;
+}
+
+.noHelpText{
+
+    color:#6b7280;
+
+    font-size:18px;
+}

@@ -1,0 +1,36 @@
+.requests-card-container{
+
+    width:100%;
+
+    min-height:100vh;
+
+    padding:40px;
+
+    box-sizing:border-box;
+
+    background-color:#f8fafc;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+.requests-heading{
+
+    font-size:36px;
+
+    font-weight:700;
+
+    color:#111827;
+
+    margin-bottom:10px;
+}
+
+.no-requests{
+
+    color:#6b7280;
+
+    font-size:18px;
+}

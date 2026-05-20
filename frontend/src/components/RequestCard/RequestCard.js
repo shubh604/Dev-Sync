@@ -19,9 +19,8 @@ function RequestCard(props) {
 
     async function cancelRequestHandler() {
         try {
-            const res = await axios.post(
+            const res = await axios.delete(
                 `http://localhost:4500/api/v1/profile/request/cancel/${props.obj._id}`,
-                {},
                 { withCredentials: true }
             );
             console.log(res);
@@ -33,9 +32,8 @@ function RequestCard(props) {
 
     async function DeleteRequestHandler() {
         try {
-            const res = await axios.post(
+            const res = await axios.delete(
                 `http://localhost:4500/api/v1/profile/request/delete/${props.obj._id}`,
-                {},
                 { withCredentials: true }
             );
             console.log(res);

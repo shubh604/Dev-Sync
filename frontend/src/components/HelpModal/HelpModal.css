@@ -1,0 +1,101 @@
+.modalOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background-color:rgba(0,0,0,0.5);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:1000;
+}
+
+.modalContainer{
+
+    width:500px;
+
+    background-color:white;
+
+    padding:30px;
+
+    border-radius:24px;
+
+    position:relative;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+.modalContainer h2{
+
+    margin:0;
+
+    color:#111827;
+}
+
+.modalContainer form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+}
+
+.modalContainer input,
+.modalContainer textarea{
+
+    padding:14px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    outline:none;
+}
+
+.submitBtn{
+
+    border:none;
+
+    background-color:#4f46e5;
+
+    color:white;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+}
+
+.closeBtn{
+
+    position:absolute;
+
+    top:18px;
+
+    right:18px;
+
+    border:none;
+
+    background:none;
+
+    font-size:20px;
+
+    cursor:pointer;
+}

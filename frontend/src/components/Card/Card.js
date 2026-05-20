@@ -23,7 +23,7 @@ function Card(props) {
     async function acceptRequestHandler() {
         try {
             const res = await axios.post(
-                `http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`,
+                `http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`,{},
                 { withCredentials: true }
             );
             console.log(res);
@@ -38,9 +38,8 @@ function Card(props) {
 
     async function removeConnectionHandler() {
         try {
-            const res = await axios.post(
+            const res = await axios.delete(
                 `http://localhost:4500/api/v1/profile/connection/remove/${props.obj._id}`,
-                {},
                 { withCredentials: true }
             );
             console.log(res);

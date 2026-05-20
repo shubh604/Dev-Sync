@@ -49,15 +49,17 @@ function Navbar(){
 
                         <NavLink className="navLink" to="/profile/feed" onClick={() => setOpenDropdown(false)}>Feed</NavLink>
 
-                        <NavLink className="navLink" to="/profile/connections" onClick={() => setOpenDropdown(false)}>Connections</NavLink>
+                        <NavLink className="navLink" to="/profile/help-hub" onClick={() => setOpenDropdown(false)}> Help-Hub</NavLink>
 
-                        <NavLink className="navLink" to="/profile/help-hub" onClick={() => setOpenDropdown(false)}> Help Hub</NavLink>
+                        <NavLink className="navLink" to="/profile/connections" onClick={() => setOpenDropdown(false)}>Connections</NavLink>
 
                         <NavLink className="navLink" to="/profile/requests/sent" onClick={() => setOpenDropdown(false)}>Requests Sent</NavLink>
 
                         <NavLink className="navLink" to="/profile/requests/pending" onClick={() => setOpenDropdown(false)}>Requests Received</NavLink>
 
-                        <button className="profileBtn" onClick={myProfileClickHandler}> Profile</button>
+                        <div className="Profile-nav-div">
+                            <button className="profileBtn" onClick={myProfileClickHandler}> Profile</button>
+                        </div>
 
                         {
                             openDropdown && <ProfileDropDown setOpenDropdown={setOpenDropdown} setLogoutClick={setLogoutClick}/>

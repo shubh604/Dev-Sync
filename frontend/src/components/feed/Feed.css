@@ -1,0 +1,16 @@
+.feedContainer{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    gap:30px;
+
+    padding:40px;
+
+    box-sizing:border-box;
+
+    justify-items:center;
+}
