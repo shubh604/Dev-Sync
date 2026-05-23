@@ -8,7 +8,7 @@ function authentication(req,res, next){
         const token = req.cookies.token;
 
         if(!token){
-            return res.json({
+            return res.status(401).json({
                 success:false,
                 message:"token missing!"
             })
@@ -47,7 +47,7 @@ function authentication(req,res, next){
 
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success:false,
             message:"internal server error, authentication failed!"
         })

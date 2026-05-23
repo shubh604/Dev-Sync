@@ -1,35 +1,37 @@
-/* HelpCard.css */
-
 .helpCard{
 
     width:100%;
 
-    background-color:white;
+    max-width:340px;
+
+    min-height:420px;
+
+    background:rgba(255,255,255,0.92);
+
+    backdrop-filter:blur(10px);
 
     border-radius:24px;
 
-    padding:26px;
+    padding:30px 30px;
 
-    box-sizing:border-box;
-
-    box-shadow:0px 8px 24px rgba(0,0,0,0.08);
+    box-shadow:0px 10px 30px rgba(0,0,0,0.10);
 
     display:flex;
 
     flex-direction:column;
 
-    gap:24px;
+    justify-content:space-between;
+
+    gap:30px;
 
     transition:0.3s;
 
-    border:1px solid #e0f2fe;
+    box-sizing:border-box;
 }
 
 .helpCard:hover{
 
     transform:translateY(-4px);
-
-    box-shadow:0px 12px 30px rgba(14,165,233,0.12);
 }
 
 .helpCardTop{
@@ -40,46 +42,30 @@
 
     align-items:flex-start;
 
-    gap:20px;
+    gap:12px;
 }
 
 .helpUserSection{
 
     display:flex;
 
-    align-items:center;
+    align-items:flex-start;
 
-    gap:16px;
+    gap:14px;
 }
 
-.helpProfilePic{
+.helpProfilePic,
+.helpFallback{
 
-    width:70px;
+    width:62px;
 
-    height:70px;
+    height:62px;
 
     border-radius:50%;
 
     object-fit:cover;
 
-    border:3px solid #e0f2fe;
-}
-
-.helpFallback{
-
-    width:70px;
-
-    height:70px;
-
-    border-radius:50%;
-
-    background:linear-gradient(
-        to right,
-        #38bdf8,
-        #2563eb
-    );
-
-    color:white;
+    background:#eef2ff;
 
     display:flex;
 
@@ -87,60 +73,70 @@
 
     align-items:center;
 
-    font-size:28px;
+    font-size:26px;
 
     font-weight:700;
-}
 
-.helpUserInfo{
+    color:#4f46e5;
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:4px;
+    flex-shrink:0;
 }
 
 .helpUserInfo h3{
 
-    margin:0;
+    font-size:19px;
 
-    font-size:21px;
+    color:#111827;
 
-    color:#0f172a;
+    margin-bottom:6px;
 }
 
 .helpUserInfo p{
 
-    margin:0;
-
-    color:#64748b;
-
-    line-height:24px;
-
-    max-width:300px;
-
     font-size:14px;
+
+    color:#6b7280;
+
+    line-height:22px;
 }
 
 .helpStatus{
 
-    background-color:#dcfce7;
+    padding:7px 12px;
 
-    color:#15803d;
+    border-radius:12px;
 
-    padding:10px 16px;
+    font-size:13px;
 
-    border-radius:14px;
+    font-weight:700;
 
-    font-size:14px;
-
-    font-weight:600;
+    text-transform:capitalize;
 
     white-space:nowrap;
 }
 
-.helpContent{
+.helpStatus.open{
+
+    background:#dbeafe;
+
+    color:#2563eb;
+}
+
+.helpStatus.in-progress{
+
+    background:#fef3c7;
+
+    color:#d97706;
+}
+
+.helpStatus.resolved{
+
+    background:#dcfce7;
+
+    color:#16a34a;
+}
+
+.myHelpStatusSection{
 
     display:flex;
 
@@ -149,44 +145,64 @@
     gap:14px;
 }
 
+.myHelpStatusText{
+
+    font-size:14px;
+
+    color:#374151;
+}
+
+.helpStatusSelect{
+
+    width:100%;
+
+    padding:12px 14px;
+
+    border-radius:14px;
+
+    border:1px solid #dbeafe;
+
+    outline:none;
+
+    font-size:14px;
+}
+
 .helpContent h2{
 
-    margin:0;
+    font-size:24px;
 
-    color:#0f172a;
+    color:#111827;
 
-    font-size:28px;
-
-    line-height:38px;
+    margin-bottom:12px;
 }
 
 .helpContent p{
 
-    margin:0;
+    font-size:15px;
 
-    color:#475569;
+    color:#6b7280;
 
-    line-height:30px;
-
-    font-size:16px;
+    line-height:28px;
 }
 
 .helpActions{
 
     display:flex;
 
-    gap:14px;
+    flex-direction:column;
 
-    flex-wrap:wrap;
+    gap:14px;
 }
 
 .helpBtn{
 
     border:none;
 
-    padding:14px 22px;
+    padding:13px 18px;
 
     border-radius:14px;
+
+    color:white;
 
     font-size:15px;
 
@@ -197,71 +213,89 @@
     transition:0.3s;
 }
 
-.primaryBtn{
-
-    background:linear-gradient(
-        to right,
-        #38bdf8,
-        #2563eb
-    );
-
-    color:white;
-}
-
-.primaryBtn:hover{
+.helpBtn:hover{
 
     transform:translateY(-2px);
+}
+
+.primaryBtn,
+.acceptBtn,
+.helpNowBtn{
+
+    background:#4f46e5;
+}
+
+.primaryBtn:hover,
+.acceptBtn:hover,
+.helpNowBtn:hover{
+
+    background:#4338ca;
 }
 
 .pendingBtn{
 
-    background-color:#e2e8f0;
-
-    color:#475569;
+    background:#94a3b8;
 
     cursor:not-allowed;
 }
 
-.acceptBtn{
+.resolvedBtn{
 
-    background-color:#22c55e;
+    background:#16a34a;
 
-    color:white;
-}
-
-.acceptBtn:hover{
-
-    background-color:#16a34a;
-
-    transform:translateY(-2px);
-}
-
-.helpNowBtn{
-
-    background:linear-gradient(
-        to right,
-        #0ea5e9,
-        #2563eb
-    );
-
-    color:white;
-}
-
-.helpNowBtn:hover{
-
-    transform:translateY(-2px);
+    cursor:not-allowed;
 }
 
 .deleteBtn{
 
-    background-color:#ef4444;
-
-    color:white;
+    background:#ef4444;
 }
 
 .deleteBtn:hover{
 
-    background-color:#dc2626;
+    background:#dc2626;
+}
 
-    transform:translateY(-2px);
+@media screen and (max-width:768px){
+
+    .helpCard{
+
+        max-width:100%;
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .helpCard{
+
+        padding:22px 18px;
+
+        min-height:390px;
+    }
+
+    .helpContent h2{
+
+        font-size:21px;
+    }
+
+    .helpContent p{
+
+        font-size:14px;
+
+        line-height:25px;
+    }
+
+    .helpUserInfo h3{
+
+        font-size:17px;
+    }
+
+}
+
+.helpDescription{
+   display: -webkit-box;
+   -webkit-line-clamp: 1;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
 }

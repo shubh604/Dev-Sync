@@ -1,16 +1,18 @@
-/* Logout.css */
-
 .logoutOverlay{
 
     position:fixed;
 
     top:0;
+
     left:0;
 
     width:100%;
+
     height:100vh;
 
-    background-color:rgba(0,0,0,0.45);
+    background:rgba(15,23,42,0.45);
+
+    backdrop-filter:blur(5px);
 
     display:flex;
 
@@ -18,22 +20,26 @@
 
     align-items:center;
 
-    z-index:1000;
+    padding:20px;
+
+    z-index:4000;
+
+    box-sizing:border-box;
 }
 
 .logoutBox{
 
-    width:90%;
+    width:100%;
 
-    max-width:400px;
+    max-width:420px;
 
-    background-color:white;
+    background:white;
 
-    padding:35px 30px;
+    border-radius:26px;
 
-    border-radius:22px;
+    padding:38px 30px;
 
-    box-shadow:0px 10px 30px rgba(0,0,0,0.18);
+    box-shadow:0px 12px 35px rgba(0,0,0,0.18);
 
     display:flex;
 
@@ -41,20 +47,22 @@
 
     align-items:center;
 
-    gap:24px;
+    gap:28px;
+
+    text-align:center;
+
+    animation:popup 0.25s ease;
 }
 
 .logoutText{
 
-    font-size:22px;
+    font-size:24px;
 
-    font-weight:600;
-
-    text-align:center;
+    font-weight:700;
 
     color:#111827;
 
-    line-height:32px;
+    line-height:36px;
 }
 
 .logoutBtns{
@@ -68,17 +76,16 @@
     gap:16px;
 }
 
-.yesBtn{
+.yesBtn,
+.cancelBtn{
 
-    padding:12px 24px;
+    flex:1;
 
     border:none;
 
-    border-radius:12px;
+    padding:14px 20px;
 
-    background-color:#dc2626;
-
-    color:white;
+    border-radius:14px;
 
     font-size:15px;
 
@@ -89,46 +96,73 @@
     transition:0.3s;
 }
 
+.yesBtn{
+
+    background:#ef4444;
+
+    color:white;
+}
+
 .yesBtn:hover{
 
-    background-color:#b91c1c;
+    background:#dc2626;
 
     transform:translateY(-2px);
 }
 
 .cancelBtn{
 
-    padding:12px 24px;
+    background:#eef2ff;
 
-    border:none;
-
-    border-radius:12px;
-
-    background-color:#e5e7eb;
-
-    color:#111827;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:0.3s;
+    color:#4f46e5;
 }
 
 .cancelBtn:hover{
 
-    background-color:#d1d5db;
+    background:#dbeafe;
 
     transform:translateY(-2px);
 }
 
-.logoutResponse{
+@keyframes popup{
 
-    color:#dc2626;
+    from{
 
-    font-size:14px;
+        opacity:0;
 
-    text-align:center;
+        transform:scale(0.92);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .logoutBox{
+
+        padding:30px 22px;
+
+        border-radius:22px;
+
+        gap:22px;
+    }
+
+    .logoutText{
+
+        font-size:20px;
+
+        line-height:30px;
+    }
+
+    .logoutBtns{
+
+        flex-direction:column;
+    }
+
 }

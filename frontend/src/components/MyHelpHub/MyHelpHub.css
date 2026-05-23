@@ -1,14 +1,16 @@
-/* MyHelpHub.css */
-
 .myHelpHubPage{
 
     width:100%;
 
     min-height:100vh;
 
-    background-color:#f0f9ff;
+    background:linear-gradient(
+        to right,
+        #eef2ff,
+        #f8fafc
+    );
 
-    padding:40px;
+    padding:35px 20px;
 
     box-sizing:border-box;
 }
@@ -17,17 +19,19 @@
 
     width:100%;
 
-    background:linear-gradient(
-        to right,
-        #38bdf8,
-        #2563eb
-    );
+    max-width:1200px;
 
-    border-radius:30px;
+    margin:0 auto 40px auto;
 
-    padding:40px;
+    background:rgba(255,255,255,0.92);
 
-    box-sizing:border-box;
+    backdrop-filter:blur(10px);
+
+    border-radius:28px;
+
+    padding:35px 32px;
+
+    box-shadow:0px 10px 35px rgba(0,0,0,0.08);
 
     display:flex;
 
@@ -35,67 +39,59 @@
 
     align-items:center;
 
-    gap:30px;
-
-    color:white;
-
-    margin-bottom:40px;
-
-    box-shadow:0px 10px 30px rgba(37,99,235,0.2);
+    gap:20px;
 }
 
-.myHelpHero h1{
+.heroContent h1{
 
-    margin:0;
+    font-size:44px;
 
-    font-size:42px;
+    color:#111827;
 
-    font-weight:700;
+    margin-bottom:14px;
 
-    margin-bottom:12px;
+    font-weight:800;
 }
 
-.myHelpHero p{
-
-    margin:0;
-
-    max-width:650px;
+.heroContent p{
 
     font-size:17px;
 
-    line-height:30px;
+    color:#6b7280;
 
-    opacity:0.95;
+    line-height:29px;
+
+    max-width:650px;
 }
 
 .createHelpBtn{
 
     border:none;
 
-    background-color:white;
+    background:#4f46e5;
 
-    color:#2563eb;
+    color:white;
 
-    padding:16px 24px;
+    padding:15px 24px;
 
     border-radius:16px;
 
-    font-size:16px;
+    font-size:15px;
 
-    font-weight:700;
+    font-weight:600;
 
     cursor:pointer;
 
     transition:0.3s;
 
-    min-width:220px;
+    white-space:nowrap;
 }
 
 .createHelpBtn:hover{
 
-    transform:translateY(-3px);
+    background:#4338ca;
 
-    background-color:#e0f2fe;
+    transform:translateY(-2px);
 }
 
 .myPostsContainer{
@@ -104,15 +100,86 @@
 
     display:grid;
 
-    grid-template-columns:
-    repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns:repeat(auto-fit,minmax(320px,340px));
+
+    justify-content:center;
 
     gap:28px;
 }
 
-.myPostsContainer p{
+.emptyText{
+
+    font-size:20px;
 
     color:#6b7280;
 
-    font-size:18px;
+    text-align:center;
+
+    margin-top:30px;
 }
+
+@media screen and (max-width:900px){
+
+    .myHelpHero{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .heroContent h1{
+
+        font-size:36px;
+    }
+
+}
+
+@media screen and (max-width:768px){
+
+    .myHelpHubPage{
+
+        padding:25px 16px;
+    }
+
+    .myPostsContainer{
+
+        gap:22px;
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .myHelpHero{
+
+        padding:28px 22px;
+
+        border-radius:22px;
+    }
+
+    .heroContent h1{
+
+        font-size:30px;
+
+        line-height:40px;
+    }
+
+    .heroContent p{
+
+        font-size:15px;
+
+        line-height:25px;
+    }
+
+    .myPostsContainer{
+
+        grid-template-columns:1fr;
+    }
+
+    .createHelpBtn{
+
+        width:100%;
+    }
+
+}
+

@@ -27,7 +27,7 @@ const helpPostSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["open", "resolved"],
+        enum: ["open", "active" , "resolved"],
         default: "open"
     },
 

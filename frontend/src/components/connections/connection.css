@@ -1,0 +1,72 @@
+.connectionsPage{
+
+    width:100%;
+
+    min-height:100vh;
+
+    background:linear-gradient(
+        to right,
+        #eef2ff,
+        #f8fafc
+    );
+
+    padding:35px 20px;
+
+    box-sizing:border-box;
+}
+
+.connectionHeading{
+
+    text-align:center;
+
+    font-size:42px;
+
+    color:#111827;
+
+    margin-bottom:35px;
+}
+
+.connectionsContainer{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:24px;
+}
+
+.emptyText{
+
+    font-size:20px;
+
+    color:#6b7280;
+
+    text-align:center;
+}
+
+@media screen and (max-width:768px){
+
+    .connectionsPage{
+
+        padding:25px 16px;
+    }
+
+    .connectionHeading{
+
+        font-size:34px;
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .connectionHeading{
+
+        font-size:28px;
+    }
+
+}

@@ -1,18 +1,14 @@
-/* MyProfile.css */
-
 .profilePage{
 
     width:100%;
 
     min-height:100vh;
 
-    background-color:#f3f4f6;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
+    background:linear-gradient(
+        to right,
+        #eef2ff,
+        #f8fafc
+    );
 
     padding:40px 20px;
 
@@ -21,13 +17,15 @@
 
 .profileHeading{
 
-    font-size:36px;
+    text-align:center;
 
-    font-weight:700;
+    font-size:46px;
+
+    font-weight:800;
 
     color:#111827;
 
-    margin-bottom:30px;
+    margin-bottom:38px;
 }
 
 .profileCardContainer{
@@ -39,4 +37,31 @@
     justify-content:center;
 
     align-items:center;
+}
+
+@media screen and (max-width:768px){
+
+    .profilePage{
+
+        padding:28px 16px;
+    }
+
+    .profileHeading{
+
+        font-size:38px;
+
+        margin-bottom:30px;
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .profileHeading{
+
+        font-size:30px;
+
+        margin-bottom:24px;
+    }
+
 }

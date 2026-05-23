@@ -2,9 +2,17 @@
 
     position:fixed;
 
-    inset:0;
+    top:0;
 
-    background-color:rgba(0,0,0,0.5);
+    left:0;
+
+    width:100%;
+
+    height:100vh;
+
+    background:rgba(15,23,42,0.45);
+
+    backdrop-filter:blur(5px);
 
     display:flex;
 
@@ -12,75 +20,30 @@
 
     align-items:center;
 
-    z-index:1000;
+    padding:20px;
+
+    z-index:3000;
+
+    box-sizing:border-box;
 }
 
 .modalContainer{
 
-    width:500px;
+    width:100%;
 
-    background-color:white;
+    max-width:520px;
 
-    padding:30px;
+    background:white;
 
-    border-radius:24px;
+    border-radius:28px;
+
+    padding:38px 30px;
+
+    box-shadow:0px 12px 35px rgba(0,0,0,0.18);
 
     position:relative;
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:20px;
-}
-
-.modalContainer h2{
-
-    margin:0;
-
-    color:#111827;
-}
-
-.modalContainer form{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:16px;
-}
-
-.modalContainer input,
-.modalContainer textarea{
-
-    padding:14px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:12px;
-
-    font-size:15px;
-
-    outline:none;
-}
-
-.submitBtn{
-
-    border:none;
-
-    background-color:#4f46e5;
-
-    color:white;
-
-    padding:14px;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    font-size:15px;
-
-    font-weight:600;
+    animation:popup 0.25s ease;
 }
 
 .closeBtn{
@@ -91,11 +54,170 @@
 
     right:18px;
 
+    width:38px;
+
+    height:38px;
+
     border:none;
 
-    background:none;
+    border-radius:50%;
 
-    font-size:20px;
+    background:#eef2ff;
+
+    color:#4f46e5;
+
+    font-size:18px;
+
+    font-weight:700;
 
     cursor:pointer;
+
+    transition:0.3s;
+}
+
+.closeBtn:hover{
+
+    background:#4f46e5;
+
+    color:white;
+}
+
+.modalContainer h2{
+
+    text-align:center;
+
+    font-size:34px;
+
+    color:#111827;
+
+    margin-bottom:28px;
+
+    font-weight:800;
+}
+
+.modalContainer form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+}
+
+.modalContainer input,
+.modalContainer textarea{
+
+    width:100%;
+
+    padding:15px 16px;
+
+    border:1px solid #dbeafe;
+
+    border-radius:14px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:0.3s;
+
+    resize:none;
+
+    box-sizing:border-box;
+}
+
+.modalContainer input:focus,
+.modalContainer textarea:focus{
+
+    border-color:#4f46e5;
+
+    box-shadow:0px 0px 0px 4px rgba(79,70,229,0.10);
+}
+
+.submitBtn{
+
+    border:none;
+
+    background:#4f46e5;
+
+    color:white;
+
+    padding:15px 20px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:0.3s;
+}
+
+.submitBtn:hover{
+
+    background:#4338ca;
+
+    transform:translateY(-2px);
+}
+
+.responseText{
+
+    text-align:center;
+
+    margin-top:18px;
+
+    color:#16a34a;
+
+    font-size:15px;
+
+    font-weight:600;
+}
+
+@keyframes popup{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(0.92);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+    }
+
+}
+
+@media screen and (max-width:480px){
+
+    .modalContainer{
+
+        padding:30px 20px;
+
+        border-radius:22px;
+    }
+
+    .modalContainer h2{
+
+        font-size:27px;
+
+        margin-bottom:22px;
+    }
+
+    .modalContainer input,
+    .modalContainer textarea{
+
+        padding:14px;
+    }
+
+    .submitBtn{
+
+        width:100%;
+    }
+
 }

@@ -1,122 +1,145 @@
-/* Card.css */
-
 .card{
 
-    width:320px;
-    min-height:420px;
+    width:100%;
 
-    background-color:white;
+    max-width:340px;
 
-    border-radius:20px;
+    min-height:430px;
 
-    padding:24px;
+    background:rgba(255,255,255,0.92);
 
-    box-shadow:0px 4px 18px rgba(0,0,0,0.12);
+    backdrop-filter:blur(10px);
+
+    border-radius:24px;
+
+    padding:28px 24px;
+
+    box-shadow:0px 10px 30px rgba(0,0,0,0.10);
 
     display:flex;
+
     flex-direction:column;
 
     align-items:center;
 
-    gap:16px;
+    justify-content:space-between;
+
+    gap:20px;
 
     transition:0.3s;
 
-    margin:20px auto;
+    box-sizing:border-box;
 }
 
 .card:hover{
 
-    transform:translateY(-5px);
+    transform:translateY(-4px);
+}
 
-    box-shadow:0px 8px 24px rgba(0,0,0,0.18);
+.cardLeft{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:18px;
 }
 
 .outer{
 
     width:110px;
+
     height:110px;
 
+    border-radius:50%;
+
+    overflow:hidden;
+
+    background:#eef2ff;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
+    flex-shrink:0;
 }
 
 .image{
 
     width:100%;
+
     height:100%;
 
-    border-radius:50%;
-
     object-fit:cover;
-
-    border:3px solid #e5e7eb;
 }
 
 .fallbackImage{
 
-    width:100%;
-    height:100%;
+    font-size:42px;
 
-    border-radius:50%;
-
-    background-color:#4f46e5;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    color:white;
-
-    font-size:38px;
     font-weight:700;
+
+    color:#4f46e5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
-.name{
+.cardContent{
 
-    font-size:28px;
+    width:100%;
 
-    font-weight:700;
+    text-align:center;
+}
+
+.cardContent h2{
+
+    font-size:30px;
 
     color:#111827;
 
-    margin-top:5px;
+    margin-bottom:12px;
 }
 
 .bio{
 
+    font-size:15px;
+
     color:#6b7280;
 
-    text-align:center;
+    line-height:28px;
 
-    line-height:24px;
-
-    min-height:40px;
+    margin-bottom:18px;
 }
 
-.skillsContainer{
+.skillsSection{
 
     width:100%;
-
-    display:flex;
-    flex-direction:column;
-
-    gap:10px;
 }
 
 .skillsHeading{
 
-    font-size:18px;
+    font-size:15px;
 
-    font-weight:600;
+    font-weight:700;
 
-    color:#111827;
+    color:#374151;
+
+    margin-bottom:12px;
 }
 
 .skillsWrapper{
 
     display:flex;
+
+    justify-content:center;
 
     flex-wrap:wrap;
 
@@ -125,76 +148,170 @@
 
 .skill{
 
-    padding:8px 14px;
-
-    background-color:#eef2ff;
+    background:#eef2ff;
 
     color:#4338ca;
 
-    border-radius:999px;
+    padding:8px 14px;
+
+    border-radius:12px;
 
     font-size:14px;
 
-    font-weight:500;
-}
-
-.noSkills{
-
-    color:#9ca3af;
+    font-weight:600;
 }
 
 .btn{
 
-    margin-top:auto;
-
-    width:100%;
-
-    padding:12px;
-
     border:none;
 
-    border-radius:12px;
-
-    background-color:#4f46e5;
+    background:#4f46e5;
 
     color:white;
 
-    font-size:16px;
+    padding:14px 22px;
 
-    font-weight:600;
+    border-radius:14px;
 
     cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
 
     transition:0.3s;
 }
 
 .btn:hover{
 
-    background-color:#4338ca;
+    background:#4338ca;
 }
 
-.btn:disabled{
-
-    opacity:0.7;
-
-    cursor:not-allowed;
-}
-
-
-.connectionButtons{
+.feedBtnWrapper{
 
     width:100%;
 
     display:flex;
 
     justify-content:center;
-    gap : 3px;
+}
+
+.connectionCard{
+
+    width:100%;
+
+    max-width:900px;
+
+    min-height:auto;
+
+    flex-direction:row;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:25px;
+}
+
+.connectionCard .cardLeft{
+
+    flex-direction:row;
+
+    align-items:center;
+
+    text-align:left;
+}
+
+.connectionCard .cardContent{
+
+    text-align:left;
+}
+
+.connectionButtons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+    min-width:210px;
+}
+
+.removeBtn{
+
+    background:#ef4444;
+}
+
+.removeBtn:hover{
+
+    background:#dc2626;
+}
+
+@media screen and (max-width:768px){
+
+    .card{
+
+        max-width:100%;
+    }
+
+    .connectionCard{
+
+        flex-direction:column;
+
+        align-items:center;
+    }
+
+    .connectionCard .cardLeft{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .connectionCard .cardContent{
+
+        text-align:center;
+    }
+
+    .connectionButtons{
+
+        width:100%;
+    }
+
+    .btn{
+
+        width:100%;
+    }
 
 }
 
-.btn{
+@media screen and (max-width:480px){
 
-    height: 60px;
-  
+    .card{
+
+        padding:24px 18px;
+
+        min-height:400px;
+    }
+
+    .cardContent h2{
+
+        font-size:24px;
+    }
+
+    .bio{
+
+        font-size:14px;
+
+        line-height:25px;
+    }
+
+    .outer{
+
+        width:95px;
+
+        height:95px;
+    }
 
 }

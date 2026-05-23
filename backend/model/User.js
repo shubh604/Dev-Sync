@@ -8,7 +8,6 @@ const User = new mongoose.Schema({
     },
     lastName: {
         type: String,
-        required: true
     },
     email: {
         type: String,
@@ -37,6 +36,15 @@ const User = new mongoose.Schema({
     lastSeen:{
         type:Date,
         default:Date.now()
+    },
+    pendingRequestCount: {
+    type:Number,
+    default:0
+    },
+
+    unreadMessageCount: {
+        type:Number,
+        default:0
     }
 
 })

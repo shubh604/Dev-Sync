@@ -1,59 +1,41 @@
-import { useContext, useState, useEffect } from "react";
-import { AppContext } from "../../context/appContext";
+import {useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./signup.css";
+import toast from "react-hot-toast";
 
 function Signup() {
-
-    const [curr, setCurr] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
-    const { user, setUser } = useContext(AppContext);
-    const [response, setResponse] = useState("");
+    const [curr, setCurr] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
     const navigate = useNavigate();
 
     function changeHandler(event) {
-        setCurr((prev) => {
-            return { ...prev, [event.target.name]: event.target.value }
-        })
+        setCurr((prev) => ({ ...prev, [event.target.name]: event.target.value }));
     }
-
-    useEffect(() => {
-        if (user) navigate("/");
-    }, [user, navigate]);
 
     async function submitHandler(event) {
         event.preventDefault();
         try {
-            const res = await axios.post(
-                "http://localhost:4500/api/v1/signup",
-                curr,
-                { withCredentials: true }
-            );
-            console.log("data sent", curr);
-            console.log("res received", res);
+           
+            const res = await axios.post("http://localhost:4500/api/v1/signup", curr, { withCredentials: true });
             if (res.data.success === true) {
-                setUser(res.data.user);
-                setResponse(res.data.message);
-            } else {
-                setResponse(res.data.message);
-            }
+                toast.success("Signup Successful 🎉");
+                setTimeout(() => { navigate("/login"); }, 1000);
+            } 
         } catch(error) {
-            console.log("error", error.response.data.message);
-            setResponse(error.response.data.message);
+            
+            toast.error(error.response?.data?.message || "Signup Failed");
         }
+       
     }
 
     return (
         <div className="signupPage">
-            {!user &&
+          
+            
                 <div className="signupContainer">
                     <h1 className="signupHeading">Create Account</h1>
+                    <p className="signupSubText">Join DevSync and connect with developers worldwide ✨</p>
+
                     <form className="signupForm" onSubmit={submitHandler}>
                         <div className="inputGroup">
                             <label htmlFor="id1">First Name</label>
@@ -77,17 +59,17 @@ function Signup() {
                         </div>
                         <button className="signupBtn">Signup</button>
                     </form>
+
                     <div className="loginText">
-                        <p>Already have an account? {" "}<NavLink className="loginLink" to="/login">Login here</NavLink></p>
-                    </div>
-                    <div className="responseMessage">
-                        <p>{response}</p>
+                        <p>
+                            Already have an account?{" "}
+                            <NavLink className="loginLink" to="/login">Login here</NavLink>
+                        </p>
                     </div>
                 </div>
-            }
+         
         </div>
     );
-
 }
 
 export default Signup;

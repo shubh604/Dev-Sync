@@ -7,14 +7,12 @@ require("dotenv").config();
 async function signupController(req, res){
 
     try{
-        const {firstName, lastName, email, password, confirmPassword} = req.body;
-
-         console.log("signup called");
+        let {firstName, lastName, email, password, confirmPassword} = req.body;
 
         //empty field validation check
         if(!firstName || !email || !password || !confirmPassword){
             console.log("empty form");
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "All fields are required except Last Name."
             })
@@ -39,11 +37,14 @@ async function signupController(req, res){
                 });
             }
         }
+        else{
+            lastName="";
+        }
 
         //email format validation check
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
-            return res.json({
+            return res.status(400).json({
                 success:false,
                 message:"Invalid email format"
             });
@@ -51,24 +52,26 @@ async function signupController(req, res){
 
         //password validation check
         if(password.length < 6){
-            return res.json({
+            return res.status(400).json({
                 success:false,
-                message:"Password must be at least 6 characters"
+                message:"Password must be of atleast 6 characters"
             });
         }
 
         //password and confirm password check
         if(password !== confirmPassword){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "confirm password doesn't match"
             })
         }
 
+        
+
         //existing user check
         const existingUser = await User.findOne({email});
         if(existingUser){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Email id already exists!"
             })
@@ -80,21 +83,21 @@ async function signupController(req, res){
             hashedPassword = await bcrypt.hash(password.trim(),10);
         }
         catch(error){
-            return res.json({
+            return res.status(500).json({
                 success: false,
                 message: "Error in hashing password"
             });
         }
 
         //valid user -> create entry in db
-        const user = await User.create({firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), password: hashedPassword});
-
+        const user = await User.create({firstName: firstName.trim(), lastName: lastName, email: email.trim(), password: hashedPassword});
+       
         await transporter.sendMail({
             from: process.env.MAIL_USER,
             to: email,
-            subject: "Welcome to DevConnect 🎉",
+            subject: "Welcome to Dev-Sync 🎉",
             html: `
-                <h2>Welcome to DevConnect 🚀</h2>
+                <h2>Welcome to Dev-Sync 🚀</h2>
 
                 <p>
                     Your account has been created successfully.
@@ -105,12 +108,16 @@ async function signupController(req, res){
                 </p>
 
                 <p>
+                Build connections. Share ideas. Learn faster. Become better together 💻✨
+                </p>
+
+                <p>
                     Happy Coding 💻
                 </p>
             `
         });
 
-        return res.json({
+        return res.status(201).json({
             success: true,
             message: "User signed up successfully!",
             user : null
@@ -118,9 +125,9 @@ async function signupController(req, res){
 
     }
     catch(error){
-        res.json({
+        return res.status(500).json({
             success: false,
-            message: "internal server error!",
+            message: "Internal Server Error!",
             data : error
         })
     }
@@ -133,17 +140,15 @@ async function loginController(req, res){
         const {email,password} = req.body;
 
         if(!email || !password){
-            return res.json({
+            return res.status(400).json({
                 success:false,
-                message: "enter all details"
+                message: "Enter All Details"
             })
         }
 
-        console.log(email , password);
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
-            return res.json({
+            return res.status(400).json({
                 success:false,
                 message:"Invalid email format"
             });
@@ -151,22 +156,25 @@ async function loginController(req, res){
 
         const user = await User.findOne({email: email.trim()});
         if(!user){
-            return res.json({
+            return res.status(400).json({
                 success:false,
-                message:"User not found"
+                message:"User Not Found"
             })
         }
 
-        const frontendUser = await User.findOne({email: email.trim()}).select("-password");
+        let frontendUser = null;
 
         if (await bcrypt.compare(password, user.password)) {
             const payload = {id: user._id};
-            const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "2h"});
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "30d"});
             const options = {
-                expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+                expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                 httpOnly: true 
             };
-            return res.cookie("token", token, options).json({
+            console.log("hii");
+            frontendUser = await User.findOne({email: email.trim()}).select("-password");
+            console.log("frontend user" , frontendUser);
+            return res.cookie("token", token, options).status(200).json({
                 success: true,
                 message: "User logged in successfully!",
                 token: token,
@@ -174,16 +182,16 @@ async function loginController(req, res){
             });
         } 
         else {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Password doesn't match!",
             });
         }
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success: false,
-            message: "internal server error!",
+            message: "Internal Server Error!",
             data: error.message
         })
     }
@@ -194,16 +202,16 @@ function logoutController(req, res){
 
     try{
         res.clearCookie("token");
-        return res.json({
+        return res.status(200).json({
             success:true,
             message:"logged out successfully!",
             user : null
         })
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success: false,
-            message: "internal server error!"
+            message: "Internal Server Error!"
         })
     }
 }

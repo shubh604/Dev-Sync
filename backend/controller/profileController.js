@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt")
 const Cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 
+const fs = require("fs");
+
 async function upload_file_to_cloudinary(file, folder) {
     const folder_object = {
         folder : folder,
@@ -16,7 +18,7 @@ async function upload_file_to_cloudinary(file, folder) {
 async function updateProfileController(req,res){
 
     try{
-        console.log("profile update controlle");
+
         const userId = req.user.id;
 
         const{firstName, lastName, bio}= req.body ;
@@ -26,17 +28,15 @@ async function updateProfileController(req,res){
 
         const user = await User.findById(userId);
         if(!user){
-            return res.json({
+            return res.status(404).json({
                 success:false,
                 message:"user not found!"
             })
         }
 
-        
-
         if(firstName){
             if(firstName.trim().length < 2){
-                return res.json({
+                return res.status(400).json({
                     success:false,
                     message:"First name must contain at least 2 characters"
                 });
@@ -49,7 +49,7 @@ async function updateProfileController(req,res){
         if(lastName){
 
             if(lastName.trim().length < 2){
-                return res.json({
+                return res.status(400).json({
                     success:false,
                     message:"Last name must contain at least 2 characters"
                 });
@@ -63,7 +63,7 @@ async function updateProfileController(req,res){
         // bio validation
         if(bio){
             if(bio.length > 200){
-                return res.json({
+                return res.status(400).json({
                     success:false,
                     message:"Bio cannot exceed 200 characters"
                 });
@@ -78,7 +78,7 @@ async function updateProfileController(req,res){
                 .map(skill => skill.trim())
                 .filter(skill => skill.length > 0);
 
-            console.log("ipdated skills: " ,user.skills);
+            console.log("updated skills: " ,user.skills);
         }
 
         // profile image upload
@@ -95,7 +95,7 @@ async function updateProfileController(req,res){
             const extension = pathModule.extname(profilePic.name).toLowerCase();
 
             if (!supported_types.includes(extension)) {
-                return res.json({
+                return res.status(400).json({
                     success: false,
                     message: "Extension or File format not supported!"
                 });
@@ -103,7 +103,8 @@ async function updateProfileController(req,res){
 
             // upload
             const response = await upload_file_to_cloudinary(profilePic, "Dev-Connect-Profiles");
-
+           
+            fs.unlinkSync(profilePic.tempFilePath);
             user.profilePic = response.secure_url;
         }
 
@@ -112,7 +113,7 @@ async function updateProfileController(req,res){
 
         const frontendUser = await User.findById(userId).select("-password");
 
-        return res.json({
+        return res.status(200).json({
             success:true,
             message:"Changes updated successfully",
             user : frontendUser
@@ -139,7 +140,7 @@ async function changePasswordController(req,res){
         const {oldPassword,newPassword,confirmPassword} = req.body;
 
         if( !oldPassword || !newPassword || !confirmPassword){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "fill complete details"
             })
@@ -148,7 +149,7 @@ async function changePasswordController(req,res){
         const user = await User.findById(userId);
 
         if(!user){
-            return res.json({
+            return res.status(404).json({
                 success: false,
                 message: "No such user exists"
             })
@@ -157,28 +158,28 @@ async function changePasswordController(req,res){
         const isMatch = await bcrypt.compare(oldPassword, user.password);
 
         if(!isMatch){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "old password incorrect"
             })
         }
 
         if(newPassword.length<6){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "password must be of atleast 6 characters."
             })
         }
 
         if(oldPassword === newPassword){
-            return res.json({
+            return res.status(400).json({
                 success:false,
                 message:"New password cannot be same as old password"
             })
         }
 
         if(newPassword!==confirmPassword){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Passwords don't match"
             })
@@ -190,7 +191,7 @@ async function changePasswordController(req,res){
             hashedPassword = await bcrypt.hash(newPassword,10);
         }
         catch{
-            return res.json({
+            return res.status(500).json({
                 success: false,
                 message: "Problem in hashing password!"
             })
@@ -199,17 +200,16 @@ async function changePasswordController(req,res){
         user.password = hashedPassword;
 
         await user.save();
-
         const frontendUser = await User.findById(userId).select("-password");
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             message: "Password updated successfully!",
-            user : frontendUser
+            user: frontendUser
         })
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
@@ -226,7 +226,7 @@ async function forgotPasswordController(req,res){
         //2. email format validation check
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
-            return res.json({
+            return res.status(400).json({
                 success:false,
                 message:"Invalid email format"
             });
@@ -235,9 +235,9 @@ async function forgotPasswordController(req,res){
         //3. user existence check
         const user = await User.findOne({email});
         if(!user){
-            return res.json({
+            return res.status(404).json({
                 success: false,
-                message: "If account exists, reset link has been sent"
+                message: "No such user Found",
             }
             )
         }
@@ -255,22 +255,52 @@ async function forgotPasswordController(req,res){
             to: email,
             subject: "Reset Password",
             html: `
-                <h2>Password Reset</h2>
-                <p>Click below link to reset password</p>
-                <a href="${resetLink}">Reset Password</a>
-                `
+                <div style="font-family: Arial, sans-serif; line-height:1.6;">
+                    <h2>Password Reset Request</h2>
+
+                    <p>
+                        We received a request to reset your password.
+                    </p>
+
+                    <p>
+                        Click the button below to set a new password:
+                    </p>
+
+                    <a 
+                        href="${resetLink}"
+                        style="
+                            display:inline-block;
+                            padding:10px 18px;
+                            background-color:#2563eb;
+                            color:white;
+                            text-decoration:none;
+                            border-radius:5px;
+                            margin-top:10px;
+                        "
+                    >
+                        Reset Password
+                    </a>
+
+                    <p style="margin-top:20px;">
+                        This link will expire in 10 minutes.
+                    </p>
+
+                    <p>
+                        If you did not request a password reset, you can safely ignore this email.
+                    </p>
+                </div>
+            `
         })
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             message:"Reset link sent to email",
-            user:null
         })
 
 
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
@@ -288,7 +318,7 @@ async function resetPasswordController(req,res){
 
         //2. empty validation
         if(!token || !newPassword || !confirmPassword){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "fill complete details"
             })
@@ -296,14 +326,14 @@ async function resetPasswordController(req,res){
 
         //3. password validation
         if(newPassword.length<6){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Password must be of atleast 6 characters"
             })
         }
 
         if(newPassword !== confirmPassword){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Passwords don't match"
             })
@@ -313,7 +343,7 @@ async function resetPasswordController(req,res){
         let payload = jwt.verify(token,process.env.RESET_SECRET);
 
         if(!payload){
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "invalid or expired token"
             })
@@ -323,7 +353,7 @@ async function resetPasswordController(req,res){
         const user  = await User.findById(payload.id);
 
         if(!user){
-            return res.json({
+            return res.status(404).json({
                 success: false,
                 message: "no such user exist"
             })
@@ -335,7 +365,7 @@ async function resetPasswordController(req,res){
             hashedPassword = await bcrypt.hash(newPassword,10);
         }
         catch(error){
-            return res.json({
+            return res.status(500).json({
                 success: false,
                 message: "Password hashing error"
             })
@@ -344,16 +374,16 @@ async function resetPasswordController(req,res){
         user.password = hashedPassword;
         await user.save();
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             message: "Password reset successful",
-            user : null
+           
         })
         
 
     }
     catch(error){
-        return res.json({
+        return res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message

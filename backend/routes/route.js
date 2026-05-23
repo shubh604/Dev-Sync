@@ -8,7 +8,7 @@ const {signupController, loginController, logoutController} = require("../contro
 const {updateProfileController,changePasswordController,forgotPasswordController,resetPasswordController} = require("../controller/profileController");
 const {getConnections, getFeed, getsentRequest, getpendingRequest,sendRequest,acceptRequest,deleteRequest,cancelRequest,removeConnection} = require("../controller/requestController");
 
-const {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts} = require("../controller/helpPostController");
+const {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts , helpStatusController} = require("../controller/helpPostController");
 
 const {ChatController} = require("../controller/chatController");
 
@@ -37,25 +37,51 @@ router.get("/profile/help-board/help-feed", authentication, GetHelpPosts);
 router.get("/profile/help-board/my-posts", authentication, GetMyPosts);
 router.delete("/profile/help-board/delete/:postId", authentication, DeleteHelpPost);
 
+router.post("/profile/help-board/update-status/:postId", authentication, helpStatusController);
+
 router.get("/profile/dev-chat/:receiverId", authentication , ChatController);
 
 
+router.post("/profile/last-seen-update", authentication, async (req, res) => {
 
+    try {
 
+        const userId = req.user.id;
+
+        await User.findByIdAndUpdate(userId, {
+            lastSeen: new Date()
+        });
+
+        res.json({
+            success: true,
+            message: "Last seen updated",
+            lastSeen: new Date()
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: "Error updating last seen"
+        });
+
+    }
+
+});
 router.get("/me", authentication, async(req,res)=>{
 
     try{
 
         const user = await User.findById(req.user.id).select("-password");
         console.log(user);
-        res.json({
+        res.status(200).json({
             success:true,
             user : user
         })
 
     }
     catch(error){
-        res.json({
+        res.status(500).json({
             success:false,
             message:"error fetching user"
             

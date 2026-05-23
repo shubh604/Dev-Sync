@@ -1,46 +1,52 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
+import Spinner from "../Spinner/Spinner";
 import "./Feed.css";
+import toast from "react-hot-toast";
 
 function Feed() {
 
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchFeed() {
-            try {
-                const response = await axios.get(
-                    "http://localhost:4500/api/v1/profile/feed",
-                    { withCredentials: true }
-                );
-                console.log("feed response", response.data);
-                setPosts(response.data.data);
-            } catch(error) {
-                console.log("Feed error", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchFeed();
-    }, []);
+  useEffect(() => {
+    async function fetchFeed() {
+      try {
+        const response = await axios.get(
+          "http://localhost:4500/api/v1/profile/feed",
+          { withCredentials: true }
+        );
+        
+        setPosts(response.data.data);
 
-    if (loading) return <p>Loading...</p>;
+      } catch(error) {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFeed();
+  }, []);
 
-    return (
+  return (
+    <div className="feedPage">
+
+      {loading && <Spinner />}
+
+      {!loading &&
         <div className="feedContainer">
-            {posts.length > 0
-                ? posts.map((post) => (
-                    <div key={post._id}>
-                        <Card obj={post} buttonType="FeedCard" />
-                    </div>
-                ))
-                : <p>No posts found</p>
-            }
+          {posts.length > 0
+            ? posts.map((post) => (
+                <Card key={post._id} obj={post} buttonType="FeedCard" />
+              ))
+            : <p className="emptyText">No posts found</p>
+          }
         </div>
-    );
+      }
 
+    </div>
+  );
 }
 
 export default Feed;

@@ -14,26 +14,40 @@ module.exports = function(io) {
         socket.on("join", async (userId) => {
             try {
                 onlineUsers[userId] = socket.id;
-                console.log("Online Users :", onlineUsers);
                 await User.findByIdAndUpdate(userId, { status: "online" });
                 io.emit("user-status-change", { userId, status: "online" });
+                const userData = await User.findById(userId);
+                socket.emit("initial-counts", {
+                    unreadMessages: userData.unreadMessageCount,
+                    pendingRequests: userData.pendingRequestCount
+                });
             } catch(error) {
                 console.log("Join Error :", error);
             }
         });
 
+        socket.on("clear-pending-requests", async (userId) => {
+            try {
+                await User.findByIdAndUpdate(userId, { pendingRequestCount: 0 });
+            } catch(error) {
+                console.log("Clear Pending Error :", error);
+            }
+        });
 
-        
+        socket.on("clear-unread-messages", async (userId) => {
+            try {
+                await User.findByIdAndUpdate(userId, { unreadMessageCount: 0 });
+            } catch(error) {
+                console.log("Clear Unread Error :", error);
+            }
+        });
 
         socket.on("send-message", async (data) => {
             try {
                 const { senderId, receiverId, text } = data;
                 const newMessage = await Message.create({ senderId, receiverId, text });
-
-                // sender ko bhi bhejo
                 socket.emit("receive-message", newMessage);
-
-                // receiver ko bhejo
+                await User.findByIdAndUpdate(receiverId, { $inc: { unreadMessageCount: 1 } });
                 const receiverSocketId = onlineUsers[receiverId];
                 if (receiverSocketId) io.to(receiverSocketId).emit("receive-message", newMessage);
             } catch(error) {

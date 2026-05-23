@@ -315,4 +315,42 @@ async function GetHelpPosts(req,res){
     }
 }
 
-module.exports = {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts};
+async function helpStatusController(req,res){
+    try{    
+        const currentUser = req.user.id;
+        const postId = req.params.postId;
+        const { status } = req.body;
+
+        const helpPost = await HelpPost.findById(postId);
+
+        if (!helpPost) {        
+            return res.json({
+                success: false,
+                message: "Post not found"
+            });
+        }       
+        if (helpPost.createdBy.toString() !== currentUser.toString()) {
+            return res.json({
+                success: false,
+                message: "Unauthorized access. You can only update the status of your own posts."
+            });
+        }   
+        helpPost.status = status;
+        await helpPost.save();
+        return res.json({
+            success: true,
+            message: "Post status updated successfully!",       
+        data: helpPost
+        });
+    }
+    catch(error){
+
+        console.log(error);
+        return res.json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+}
+
+module.exports = {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts, helpStatusController};
