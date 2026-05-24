@@ -1,5 +1,6 @@
 const Message = require("./model/ChatSchema");
 const User = require("./model/User");
+const Connection = require("./model/connectionSchema");
 
 const onlineUsers = {};
 const activeChats = {};
@@ -29,6 +30,52 @@ module.exports = function(io) {
 
         socket.on("active-chat", ({ userId, chattingWith }) => {
    activeChats[userId] = chattingWith;
+});
+socket.on("leave-chat", (userId) => {
+
+    delete activeChats[userId];
+
+    console.log("Active Chats :", activeChats);
+
+});
+socket.on("clear-chat-unread", async ({ currentUser, receiverId }) => {
+
+    try {
+
+        const connection = await Connection.findOne({
+            $or: [
+                {
+                    fromUser: currentUser,
+                    toUser: receiverId
+                },
+                {
+                    fromUser: receiverId,
+                    toUser: currentUser
+                }
+            ]
+        });
+
+        if (!connection) return;
+
+        // current user is toUser
+        if (connection.toUser.toString() === currentUser.toString()) {
+
+            connection.toMsgCount = 0;
+
+        } else {
+
+            connection.fromMsgCount = 0;
+
+        }
+
+        await connection.save();
+
+    } catch(error) {
+
+        console.log("Clear Chat Unread Error :", error);
+
+    }
+
 });
 
         socket.on("request-count-change", async ({ receiverId, action }) => {
@@ -88,6 +135,7 @@ module.exports = function(io) {
         // check if receiver is currently chatting with sender
         const isCurrentlyChatting =
             activeChats[receiverId] === senderId;
+            console.log(activeChats);
 
         // only increment unread if NOT chatting
         if (!isCurrentlyChatting) {
@@ -95,6 +143,38 @@ module.exports = function(io) {
             await User.findByIdAndUpdate(receiverId, {
                 $inc: { unreadMessageCount: 1 }
             });
+
+            const connection = await Connection.findOne({
+    $or: [
+        {
+            fromUser: senderId,
+            toUser: receiverId
+        },
+        {
+            fromUser: receiverId,
+            toUser: senderId
+        }
+    ]
+});
+
+if (connection) {
+    
+    // sender is fromUser
+    if (connection.fromUser.toString() === senderId.toString()) {
+        await Connection.findByIdAndUpdate(connection._id, {
+   $inc: { toMsgCount: 1 }
+});
+
+    } else {
+        await Connection.findByIdAndUpdate(connection._id, {
+   $inc: { fromMsgCount: 1 }
+});
+
+    }
+
+}
+
+            
 
         }
 
@@ -119,6 +199,10 @@ module.exports = function(io) {
 
     }
 });
+
+
+        
+
 
         socket.on("disconnect", async () => {
             console.log("User Disconnected :", socket.id);

@@ -14,6 +14,8 @@ function Card(props) {
     const [requestType, setRequestType] = useState(props.obj.requestType);
     const [error, setError] = useState({ show: false, title: "", message: "" });
 
+    console.log(props);
+
     async function sendRequestHandler() {
         try {
             setLoading(true);
@@ -109,13 +111,13 @@ function Card(props) {
                         {connectionStatus === "none" && <button className="btn" onClick={sendRequestHandler}>Connect</button>}
                         {connectionStatus === "pending" && requestType === "sent" && <button className="btn" disabled>Request-Sent</button>}
                         {connectionStatus === "pending" && requestType === "received" && <button className="btn" onClick={acceptRequestHandler}>Accept-Req</button>}
-                        {connectionStatus === "accepted" && <button className="btn" onClick={chatHandler1}>Dev-Chat</button>}
+                        {connectionStatus === "accepted" && <button className="btn" onClick={chatHandler1}>Dev-Chat{props.obj.messages> 0 && <span className="badge">{props.obj.messages}</span>}</button>}
                     </div>
                 }
 
                 {props.buttonType === "connection" &&
                     <div className="connectionButtons">
-                        <button className="btn" onClick={chatHandler}>Dev-Chat</button>
+                        <button className="btn" onClick={chatHandler}>Dev-Chat{props.obj.messages> 0 && <span className="badge">{props.obj.messages}</span>}</button>
                         <button className="btn removeBtn" onClick={removeConnectionHandler}>Remove-Connection</button>
                     </div>
                 }

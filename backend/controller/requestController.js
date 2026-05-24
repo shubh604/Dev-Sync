@@ -145,77 +145,227 @@ async function removeConnection(req, res) {
     }
 }
 
-async function getConnections(req, res) {
-    try {
-        const currentUser = req.user.id;
+// async function getConnections(req, res) {
+//     try {
+//         const currentUser = req.user.id;
 
-        const connections = await Connection.find({
-            $or: [{ fromUser: currentUser }, { toUser: currentUser }],
-            status: "accepted"
-        }).populate("fromUser toUser", "-password");
+//         const connections = await Connection.find({
+//             $or: [{ fromUser: currentUser }, { toUser: currentUser }],
+//             status: "accepted"
+//         }).populate("fromUser toUser", "-password");
   
-        const people = connections
-    .filter(conn => conn.fromUser && conn.toUser)
-    .map(conn =>
-        conn.fromUser._id.toString() === currentUser.toString()
-            ? conn.toUser
-            : conn.fromUser
-    );
+//         const people = connections
+//     .filter(conn => conn.fromUser && conn.toUser)
+//     .map(conn =>
+//         conn.fromUser._id.toString() === currentUser.toString()
+//             ? conn.toUser
+//             : conn.fromUser
+//     );
 
    
         
-        return res.status(200).json({ success: true, message: "Connections have been Fetched Successfully!", data: people });
+//         return res.status(200).json({ success: true, message: "Connections have been Fetched Successfully!", data: people });
+//     } catch(error) {
+//         console.log(error);
+//        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+//     }
+// }
+async function getConnections(req, res) {
+
+    try {
+
+        const currentUser = req.user.id;
+
+        const connections = await Connection.find({
+            $or: [
+                { fromUser: currentUser },
+                { toUser: currentUser }
+            ],
+            status: "accepted"
+        }).populate("fromUser toUser", "-password");
+
+        const people = connections
+            .filter(conn => conn.fromUser && conn.toUser)
+            .map(conn => {
+
+                const isCurrentUserFrom =
+                    conn.fromUser._id.toString() === currentUser.toString();
+
+                const person = isCurrentUserFrom
+                    ? conn.toUser
+                    : conn.fromUser;
+
+                // received unread messages count
+                const messages = isCurrentUserFrom
+                    ? conn.fromMsgCount
+                    : conn.toMsgCount;
+
+                return {
+                    ...person.toObject(),
+                    messages
+                };
+
+            });
+
+        return res.status(200).json({
+            success: true,
+            message: "Connections have been Fetched Successfully!",
+            data: people
+        });
+
     } catch(error) {
+
         console.log(error);
-       return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
+
     }
 }
 
 async function getFeed(req, res) {
+
     try {
+
         const currentUser = req.user.id;
 
         const connections = await Connection.find({
-            $or: [{ fromUser: currentUser }, { toUser: currentUser }]
+            $or: [
+                { fromUser: currentUser },
+                { toUser: currentUser }
+            ]
         });
 
-        const users = await User.find({ _id: { $ne: currentUser } }).select("-password");
+        const users = await User.find({
+            _id: { $ne: currentUser }
+        }).select("-password");
 
         const connectionMap = new Map();
 
         connections.forEach((conn) => {
+
             let otherUser;
             let requestType;
+            let messages = 0;
 
             if (conn.fromUser.toString() === currentUser.toString()) {
+
                 otherUser = conn.toUser.toString();
                 requestType = "sent";
+
+                // unread messages received by current user
+                messages = conn.fromMsgCount;
+
             } else {
+
                 otherUser = conn.fromUser.toString();
                 requestType = "received";
+
+                // unread messages received by current user
+                messages = conn.toMsgCount;
+
             }
 
-            connectionMap.set(otherUser, { status: conn.status, requestType: requestType });
+            connectionMap.set(otherUser, {
+                status: conn.status,
+                requestType: requestType,
+                messages
+            });
+
         });
 
         const feed = users.map((user) => {
-            const connectionData = connectionMap.get(user._id.toString());
+
+            const connectionData =
+                connectionMap.get(user._id.toString());
+
             let status = "none";
             let requestType = null;
+            let messages = 0;
 
             if (connectionData) {
+
                 status = connectionData.status;
                 requestType = connectionData.requestType;
+                messages = connectionData.messages;
+
             }
 
-            return { ...user.toObject(), connectionStatus: status, requestType: requestType };
+            return {
+                ...user.toObject(),
+                connectionStatus: status,
+                requestType: requestType,
+                messages
+            };
+
         });
+
         feed.sort(() => Math.random() - 0.5);
-        return res.status(200).json({ success: true, message: "feed fetched successfully", data: feed });
+
+        return res.status(200).json({
+            success: true,
+            message: "feed fetched successfully",
+            data: feed
+        });
+
     } catch(error) {
-        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
+
     }
 }
+// async function getFeed(req, res) {
+//     try {
+//         const currentUser = req.user.id;
+
+//         const connections = await Connection.find({
+//             $or: [{ fromUser: currentUser }, { toUser: currentUser }]
+//         });
+
+//         const users = await User.find({ _id: { $ne: currentUser } }).select("-password");
+
+//         const connectionMap = new Map();
+
+//         connections.forEach((conn) => {
+//             let otherUser;
+//             let requestType;
+
+//             if (conn.fromUser.toString() === currentUser.toString()) {
+//                 otherUser = conn.toUser.toString();
+//                 requestType = "sent";
+//             } else {
+//                 otherUser = conn.fromUser.toString();
+//                 requestType = "received";
+//             }
+
+//             connectionMap.set(otherUser, { status: conn.status, requestType: requestType });
+//         });
+
+//         const feed = users.map((user) => {
+//             const connectionData = connectionMap.get(user._id.toString());
+//             let status = "none";
+//             let requestType = null;
+
+//             if (connectionData) {
+//                 status = connectionData.status;
+//                 requestType = connectionData.requestType;
+//             }
+
+//             return { ...user.toObject(), connectionStatus: status, requestType: requestType };
+//         });
+//         feed.sort(() => Math.random() - 0.5);
+//         return res.status(200).json({ success: true, message: "feed fetched successfully", data: feed });
+//     } catch(error) {
+//         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+//     }
+// }
 
 // async function getUnreadMsg(req,res){
 //     try{

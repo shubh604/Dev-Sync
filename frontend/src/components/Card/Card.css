@@ -69,7 +69,22 @@
 
     flex-shrink:0;
 }
+.badge{
+    position: absolute;
+    top: -5px;
+    right: -5px;
 
+    width: 22px;
+    height: 22px;
+
+    background-color: #dd2020;
+
+    border-radius: 50%;
+
+    border: 1px solid white;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
 .image{
 
     width:100%;
@@ -180,6 +195,7 @@
     font-weight:600;
 
     transition:0.3s;
+    position : relative;
 }
 
 .btn:hover{

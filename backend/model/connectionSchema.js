@@ -16,7 +16,16 @@ const connectionSchema = new mongoose.Schema({
     type: String, 
     enum: ['pending', 'accepted'], 
     default: 'pending' 
-  }
+  },
+  fromMsgCount: {
+    type: Number,
+    default: 0
+},
+
+toMsgCount: {
+    type: Number,
+    default: 0
+}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Connection', connectionSchema);

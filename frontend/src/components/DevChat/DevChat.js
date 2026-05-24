@@ -29,11 +29,19 @@ useEffect(() => {
         chattingWith: receiverId
     });
 
+    socket.emit("clear-chat-unread", {
+        currentUser: user._id,
+        receiverId
+    });
+
+
     return () => {
         socket.emit("leave-chat", user._id);
     };
 
-}, [receiverId]);
+}, [receiverId, user]);
+
+
     useEffect(() => {
         async function loadChats() {
             try {
