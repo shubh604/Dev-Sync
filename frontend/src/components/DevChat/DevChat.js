@@ -1,11 +1,13 @@
 import { useEffect, useState, useContext, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import socket from "../../socket";
 import { AppContext } from "../../context/appContext";
 import Spinner from "../Spinner/Spinner";
 import ErrorModal from "../ErrorModal/ErrorModal";
 import "./DevChat.css";
+import toast from "react-hot-toast";
+
 
 function DevChat() {
     const { receiverId } = useParams();
@@ -17,16 +19,30 @@ function DevChat() {
     const [receiverStatus, setReceiverStatus] = useState("offline");
     const [error, setError] = useState({ show: false, title: "", message: "" });
     const messagesEndRef = useRef(null);
+   const sendAudioRef = useRef(new Audio("/send_sound.mp3"));
+const receiveAudioRef = useRef(new Audio("/receive_sound.mp3"));
 
+useEffect(() => {
+
+    socket.emit("active-chat", {
+        userId: user._id,
+        chattingWith: receiverId
+    });
+
+    return () => {
+        socket.emit("leave-chat", user._id);
+    };
+
+}, [receiverId]);
     useEffect(() => {
         async function loadChats() {
             try {
                 const response = await axios.get(`http://localhost:4500/api/v1/profile/dev-chat/${receiverId}`, { withCredentials: true });
                 setMessages(response.data.data);
                 setReceiverStatus(response.data.receiverStatus);
+                
             } catch(error) {
-                console.log(error);
-                setError({ show: true, title: "Error", message: "Unable to load chats" });
+                toast.error("Unable to fetch chats!");
             } finally {
                 setLoading(false);
             }
@@ -46,18 +62,29 @@ function DevChat() {
         };
 
         const messageHandler = async (newMessage) => {
-            try {
-                setMessages((prev) => {
-                    const alreadyExists = prev.some((msg) => msg.senderId === newMessage.senderId && msg.text === newMessage.text && msg.receiverId === newMessage.receiverId);
-                    if (alreadyExists) return prev;
-                    return [...prev, newMessage];
-                });
-                const audio = new Audio("/receive_sound.mp3");
-                await audio.play();
-            } catch(error) {
-                console.log("Audio Error :", error);
-            }
-        };
+    try {
+
+        setMessages((prev) => {
+
+            const alreadyExists = prev.some(
+                (msg) => msg._id === newMessage._id
+            );
+
+            if (alreadyExists) return prev;
+
+            return [...prev, newMessage];
+        });
+        
+         
+    receiveAudioRef.current.currentTime = 0;
+
+receiveAudioRef.current.play().catch((err) => {
+    console.log("Receive sound error :", err);
+});
+    } catch (error) {
+        console.log("Audio Error :", error);
+    }
+};
 
         socket.on("user-status-change", statusHandler);
         socket.on("receive-message", messageHandler);
@@ -69,12 +96,26 @@ function DevChat() {
     }, [user, receiverId]);
 
     function sendMessageHandler() {
+
         if (!text.trim()) return;
-        const newMessage = { senderId: user._id, receiverId, text };
+
+        const newMessage = {
+            senderId: user._id,
+            receiverId,
+            text,
+        };
+
+        // optimistic update
         setMessages((prev) => [...prev, newMessage]);
-        const audio = new Audio("/send_sound.mp3");
-        audio.play().catch((err) => { console.log("Send sound error :", err); });
+
         socket.emit("send-message", newMessage);
+sendAudioRef.current.currentTime = 0;
+
+sendAudioRef.current.play().catch((err) => {
+    console.log("Send sound error :", err);
+});
+
+
         setText("");
     }
 
@@ -95,7 +136,7 @@ function DevChat() {
                         {messages.map((msg, index) => {
                             const senderId = typeof msg.senderId === "object" ? msg.senderId._id : msg.senderId;
                             return (
-                                <div key={index} className={senderId?.toString() === user?._id?.toString() ? "myMessageContainer" : "otherMessageContainer"}>
+                                <div key={msg._id || index} className={senderId?.toString() === user?._id?.toString() ? "myMessageContainer" : "otherMessageContainer"}>
                                     <div className={senderId?.toString() === user?._id?.toString() ? "myMessage" : "otherMessage"}>{msg.text}</div>
                                 </div>
                             );

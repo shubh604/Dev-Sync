@@ -1,5 +1,7 @@
 const Connection = require("../model/connectionSchema");
 const User = require("../model/User");
+const Message = require("../model/ChatSchema")
+const mongoose = require("mongoose");
 
 // button - send connection request
 async function sendRequest(req, res) {
@@ -7,7 +9,7 @@ async function sendRequest(req, res) {
         console.log("send request controller called");
         const fromUser = req.user.id;
         const toUser = req.params.userId;
-
+        console.log("Sedn req backend hit");
         if (fromUser === toUser) return res.status(400).json({ success: false, message: "You cannot send request to yourself" });
 
         const userExists = await User.findById(toUser);
@@ -24,7 +26,7 @@ async function sendRequest(req, res) {
 
         const connection = await Connection.create({ fromUser, toUser, status: "pending" });
 
-        await User.findByIdAndUpdate(toUser, { $inc: { pendingRequestCount: 1 } });
+        
 
         return res.status(200).json({ success: true, message: "Your request has been successfully sent!" });
     } 
@@ -81,7 +83,6 @@ async function acceptRequest(req, res) {
 
         connection.status = "accepted";
         await connection.save();
-        await User.findByIdAndUpdate(currentUser, { $inc: { pendingRequestCount: -1 } });
 
         return res.status(200).json({ success: true, message: "Request has been accepted successfully!" });
     } catch(error) {
@@ -99,8 +100,6 @@ async function deleteRequest(req, res) {
 
         if (!connection) return res.status(404).json({ success: false, message: "Request not found" });
 
-        await User.findByIdAndUpdate(currentUser, { $inc: { pendingRequestCount: -1 } });
-
         return res.status(200).json({ success: true, message: "Request has been deleted successfully!" });
     } catch(error) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
@@ -117,8 +116,7 @@ async function cancelRequest(req, res) {
 
         if (!connection) return res.status(404).json({ success: false, message: "Request not found" });
 
-        await User.findByIdAndUpdate(toUser, { $inc: { pendingRequestCount: -1 } });
-
+      
         return res.status(200).json({ success: true, message: "Request has been cancelled successfully!" });
     } catch(error) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
@@ -155,7 +153,7 @@ async function getConnections(req, res) {
             $or: [{ fromUser: currentUser }, { toUser: currentUser }],
             status: "accepted"
         }).populate("fromUser toUser", "-password");
-        console.log(connections);
+  
         const people = connections
     .filter(conn => conn.fromUser && conn.toUser)
     .map(conn =>
@@ -164,7 +162,7 @@ async function getConnections(req, res) {
             : conn.fromUser
     );
 
-        console.log("aee");
+   
         
         return res.status(200).json({ success: true, message: "Connections have been Fetched Successfully!", data: people });
     } catch(error) {
@@ -218,5 +216,53 @@ async function getFeed(req, res) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }
 }
+
+// async function getUnreadMsg(req,res){
+//     try{
+//         const currentUser = req.user.id;
+
+// // Step 1 - connections map
+// const connections = await Connection.find({
+//     $or: [{ fromUser: currentUser }, { toUser: currentUser }],
+//     status: "accepted"
+// }).populate("fromUser toUser", "_id firstName lastName profilePic");
+
+// const connectionsMap = new Map();
+// connections.forEach((conn) => {
+//     const otherUser = conn.fromUser._id.toString() === currentUser.toString() ? conn.toUser : conn.fromUser;
+//     connectionsMap.set(otherUser._id.toString(), otherUser);
+// });
+
+// // Step 2 - unread msg count map
+// const unreadCounts = await Message.aggregate([
+//     { $match: { receiverId: currentUser, seen: false } },
+//     { $group: { _id: "$senderId", count: { $sum: 1 } } }
+// ]);
+
+// const unreadMap = new Map();
+// unreadCounts.forEach((item) => {
+//     unreadMap.set(item._id.toString(), item.count);
+// });
+
+// // Step 3 - connections pe iterate
+// const result = [];
+// connectionsMap.forEach((user, userId) => {
+//     if (unreadMap.has(userId)) {
+//         result.push({
+//             user,
+//             unreadCount: unreadMap.get(userId)
+//         });
+//     }
+// });
+
+// return res.status(200).json({ success: true,message: successfull, data: result });
+//     }
+//     catch(error){
+//         return res.status(500).json({success: false, message: "Internal server error"});
+//     }
+// }
+
+
+
 
 module.exports = { getConnections, getFeed, getsentRequest, getpendingRequest, sendRequest, acceptRequest, deleteRequest, cancelRequest, removeConnection };

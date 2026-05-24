@@ -2,6 +2,7 @@ const Message = require("./model/ChatSchema");
 const User = require("./model/User");
 
 const onlineUsers = {};
+const activeChats = {};
 
 // on -> receive
 // emit -> send
@@ -26,6 +27,37 @@ module.exports = function(io) {
             }
         });
 
+        socket.on("active-chat", ({ userId, chattingWith }) => {
+   activeChats[userId] = chattingWith;
+});
+
+        socket.on("request-count-change", async ({ receiverId, action }) => {
+    try {
+
+        const value = action === "increment" ? 1 : -1;
+
+        await User.findByIdAndUpdate(receiverId, {
+            $inc: {
+                pendingRequestCount: value
+            }
+        });
+
+        const receiverSocketId = onlineUsers[receiverId];
+
+        if (receiverSocketId) {
+
+            const updatedUser = await User.findById(receiverId);
+
+            io.to(receiverSocketId).emit("pending-request-updated", {
+                pendingRequests: updatedUser.pendingRequestCount
+            });
+        }
+
+    } catch(error) {
+        console.log("Request Count Error :", error);
+    }
+});
+
         socket.on("clear-pending-requests", async (userId) => {
             try {
                 await User.findByIdAndUpdate(userId, { pendingRequestCount: 0 });
@@ -42,18 +74,51 @@ module.exports = function(io) {
             }
         });
 
-        socket.on("send-message", async (data) => {
-            try {
-                const { senderId, receiverId, text } = data;
-                const newMessage = await Message.create({ senderId, receiverId, text });
-                socket.emit("receive-message", newMessage);
-                await User.findByIdAndUpdate(receiverId, { $inc: { unreadMessageCount: 1 } });
-                const receiverSocketId = onlineUsers[receiverId];
-                if (receiverSocketId) io.to(receiverSocketId).emit("receive-message", newMessage);
-            } catch(error) {
-                console.log("Error in sending message :", error);
-            }
+      socket.on("send-message", async (data) => {
+    try {
+
+        const { senderId, receiverId, text } = data;
+
+        const newMessage = await Message.create({
+            senderId,
+            receiverId,
+            text
         });
+
+        // check if receiver is currently chatting with sender
+        const isCurrentlyChatting =
+            activeChats[receiverId] === senderId;
+
+        // only increment unread if NOT chatting
+        if (!isCurrentlyChatting) {
+
+            await User.findByIdAndUpdate(receiverId, {
+                $inc: { unreadMessageCount: 1 }
+            });
+
+        }
+
+        const receiverSocketId = onlineUsers[receiverId];
+
+        const populatedMessage = await Message.findById(newMessage._id)
+            .populate("senderId", "name profilePic")
+            .populate("receiverId", "name profilePic");
+
+        if (receiverSocketId) {
+
+            io.to(receiverSocketId).emit(
+                "receive-message",
+                populatedMessage
+            );
+
+        }
+
+    } catch (error) {
+
+        console.log("Error in sending message :", error);
+
+    }
+});
 
         socket.on("disconnect", async () => {
             console.log("User Disconnected :", socket.id);
@@ -61,6 +126,7 @@ module.exports = function(io) {
                 for (let userId in onlineUsers) {
                     if (onlineUsers[userId] === socket.id) {
                         delete onlineUsers[userId];
+                        delete activeChats[userId];
                         await User.findByIdAndUpdate(userId, { status: "offline", lastSeen: Date.now() });
                         io.emit("user-status-change", { userId, status: "offline" });
                         break;

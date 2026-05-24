@@ -54,7 +54,7 @@ function Navbar() {
                             <NavLink className="navLink" to="/profile/feed">Feed</NavLink>
                             <NavLink className="navLink" to="/profile/help-hub">Help-Hub</NavLink>
                             <NavLink className="navLink" to="/profile/connections">
-                                Connections {unreadMessages > 0 && <span className="badge">{unreadMessages}</span>}
+                                Connections {unreadMessages > 0 && <span className="badge1"></span>}
                             </NavLink>
                             <NavLink className="navLink" to="/profile/requests/sent">Requests-Sent</NavLink>
                             <NavLink className="navLink" to="/profile/requests/pending">
@@ -73,7 +73,7 @@ function Navbar() {
                                 <NavLink className="mobileLink" to="/profile/feed" onClick={closeAll}>Feed</NavLink>
                                 <NavLink className="mobileLink" to="/profile/help-hub" onClick={closeAll}>Help-Hub</NavLink>
                                 <NavLink className="mobileLink" to="/profile/connections" onClick={closeAll}>
-                                    Connections {unreadMessages > 0 && <span className="badge">{unreadMessages}</span>}
+                                    Connections {unreadMessages > 0 && <span className="badge1"></span>}
                                 </NavLink>
                                 <NavLink className="mobileLink" to="/profile/requests/sent" onClick={closeAll}>Requests-Sent</NavLink>
                                 <NavLink className="mobileLink" to="/profile/requests/pending" onClick={closeAll}>

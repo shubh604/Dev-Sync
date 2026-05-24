@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Spinner from "../Spinner/Spinner";
 import toast from "react-hot-toast";
 import "./RequestCard.css";
+import socket from "../../socket";
 
 function RequestCard(props) {
     const [loading, setLoading] = useState(false);
@@ -27,7 +28,11 @@ const [pending, setPending] = useState(props.type === "pending");
             setLoading(true);
             const res = await axios.delete(`http://localhost:4500/api/v1/profile/request/cancel/${props.obj._id}`, { withCredentials: true });
             setSent(false);
-            toast.success("Request Cancelled!")
+            toast.success("Request Cancelled!");
+            socket.emit("request-count-change", {
+                receiverId:`${props.obj._id}`,
+                action: "decrement"
+            });
         } catch(error) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
@@ -72,7 +77,7 @@ const [pending, setPending] = useState(props.type === "pending");
                         </>
                     )}
                     {sent && (
-                        <button className="btn secondary-btn" onClick={cancelRequestHandler}>Cancel</button>
+                        <button  className="btn secondary-btn" onClick={cancelRequestHandler}>Cancel</button>
                     )}
                 </div>
             </div>

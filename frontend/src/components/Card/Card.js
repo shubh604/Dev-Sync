@@ -5,6 +5,7 @@ import Spinner from "../Spinner/Spinner";
 import ErrorModal from "../ErrorModal/ErrorModal";
 import "./Card.css";
 import toast from "react-hot-toast";
+import socket from "../../socket";
 function Card(props) {
 
     const navigate = useNavigate();
@@ -21,6 +22,10 @@ function Card(props) {
             setConnectionStatus("pending");
             setRequestType("sent");
             toast.success("Request sent successfully🎉")
+            socket.emit("request-count-change", {
+                receiverId:userId,
+                action: "increment"
+            });
         } catch(error) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
@@ -63,6 +68,10 @@ function Card(props) {
         navigate(`/profile/dev-chat/${props.obj._id}`);
     }
 
+    function chatHandler1(){
+        navigate(`/profile/dev-chat/${props.obj._id}`, {state: {fron: "feed"}} );
+    }
+
     return (
         <>
             {loading && <Spinner />}
@@ -100,7 +109,7 @@ function Card(props) {
                         {connectionStatus === "none" && <button className="btn" onClick={sendRequestHandler}>Connect</button>}
                         {connectionStatus === "pending" && requestType === "sent" && <button className="btn" disabled>Request-Sent</button>}
                         {connectionStatus === "pending" && requestType === "received" && <button className="btn" onClick={acceptRequestHandler}>Accept-Req</button>}
-                        {connectionStatus === "accepted" && <button className="btn" onClick={chatHandler}>Dev-Chat</button>}
+                        {connectionStatus === "accepted" && <button className="btn" onClick={chatHandler1}>Dev-Chat</button>}
                     </div>
                 }
 

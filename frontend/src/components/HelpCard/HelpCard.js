@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Spinner from "../Spinner/Spinner";
 import toast from "react-hot-toast";
+import socket from "../../socket";
 
 function HelpCard(props) {
 
@@ -20,6 +21,10 @@ function HelpCard(props) {
             setConnectionStatus("pending");
             setRequestType("sent");
             toast.success("Request Sent!");
+            socket.emit("request-count-change", {
+                receiverId: `${props.help.createdBy._id}` ,
+                action: "increment"
+            });
         } catch(error) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
@@ -64,7 +69,7 @@ function HelpCard(props) {
     }
 
     function helpnowHandler() {
-        navigate(`/profile/dev-chat/${props.help.createdBy._id}`);
+        navigate(`/profile/dev-chat/${props.help.createdBy._id}`, {state: {fron: "help-hub"}} );
     }
 
     return (
