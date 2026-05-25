@@ -3,24 +3,22 @@ import axios from "axios";
 import HelpCard from "../HelpCard/HelpCard";
 import HelpModal from "../HelpModal/HelpModal";
 import Spinner from "../Spinner/Spinner";
-import ErrorModal from "../ErrorModal/ErrorModal";
+import toast from "react-hot-toast";
 import "./MyHelpHub.css";
 
 function MyHelpHub() {
     const [myPosts, setMyPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
-    const [error, setError] = useState({ show: false, title: "", message: "" });
+
 
     useEffect(() => {
         async function fetchMyPosts() {
             try {
                 const response = await axios.get("http://localhost:4500/api/v1/profile/help-board/my-posts", { withCredentials: true });
-                console.log(response.data);
                 setMyPosts(response.data.data);
             } catch(error) {
-                console.log(error);
-                setError({ show: true, title: "My Help Hub Error", message: error.response?.data?.message || "Unable to fetch posts" });
+                toast.error(error?.response?.data?.message || "Something went wrong");
             } finally {
                 setLoading(false);
             }
@@ -31,8 +29,7 @@ function MyHelpHub() {
     return (
         <div className="myHelpHubPage">
             {loading && <Spinner />}
-            {error.show && <ErrorModal obj={error} onClose={() => setError({ show: false, title: "", message: "" })} />}
-
+         
             {!loading && (
                 <>
                     <div className="myHelpHero">

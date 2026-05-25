@@ -35,7 +35,10 @@ function Feed() {
       {loading && <Spinner />}
 
       {!loading &&
+
+     
         <div className="feedContainer">
+         
           {posts.length > 0
             ? posts.map((post) => (
                 <Card key={post._id} obj={post} buttonType="FeedCard" />

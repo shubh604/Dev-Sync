@@ -12,6 +12,7 @@ function EditProfile() {
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   
   useEffect(()=>{
   
@@ -34,7 +35,7 @@ function EditProfile() {
   async function submitHandler(event) {
     event.preventDefault();
     try {
- 
+      setSaving(true);
 
       const formData = new FormData();
       formData.append("firstName", curr.firstName);
@@ -59,6 +60,9 @@ function EditProfile() {
 
        toast.error(error.response?.data?.message || "Profile update failed");   
 }
+finally{
+  setSaving(false);
+}
   
 }
 
@@ -81,18 +85,42 @@ function EditProfile() {
 
           <div className="inputGroup">
             <label>Profile Image</label>
-            <input type="file" accept="image/*" onChange={(event) => setImage(event.target.files[0])} />
-            <p className="fileText">Supported formats: .png .jpg .jpeg</p>
+            <div
+    className="dropArea"
+    onDragOver={(e) => e.preventDefault()}
+    onDrop={(e) => {
+        e.preventDefault();
+        setImage(e.dataTransfer.files[0]);
+    }}
+    onClick={() => document.getElementById("fileInput").click()}
+>
+   {image 
+    ? <p>📁 {image.name}</p> 
+    : <>
+        <p>Drag & drop or click to upload</p>
+        <p className="fileText">Supported formats: .png .jpg .jpeg</p>
+      </>
+}
+    <input
+        type="file"
+        id="fileInput"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={(e) => setImage(e.target.files[0])}
+    />
+</div>
+    
+            
           </div>
 
           <div className="inputGroup">
             <label htmlFor="id1">First Name</label>
-            <input type="text" id="id1" name="firstName" value={curr.firstName} onChange={changeHandler} placeholder="Enter first name" />
+            <input type="text" id="id1" name="firstName" value={curr.firstName} maxLength={15} onChange={changeHandler} placeholder="Enter first name" />
           </div>
 
           <div className="inputGroup">
             <label htmlFor="id2">Last Name</label>
-            <input type="text" id="id2" name="lastName" value={curr.lastName} onChange={changeHandler} placeholder="Enter last name" />
+            <input type="text" id="id2" name="lastName" value={curr.lastName} maxLength={15} onChange={changeHandler} placeholder="Enter last name" />
           </div>
 
           <div className="inputGroup">
@@ -105,7 +133,7 @@ function EditProfile() {
             <input type="text" id="id4" name="skills" value={curr.skills} onChange={changeHandler} placeholder="Enter skills (comma-separated)" />
           </div>
 
-          <button className="saveBtn">Save Changes</button>
+          <button className="saveBtn saveBtn1"  disabled={saving} >Save Changes</button>
 
         </form>
 

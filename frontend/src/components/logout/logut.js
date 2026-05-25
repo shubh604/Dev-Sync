@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/appContext";
 import axios from "axios";
 import Spinner from "../Spinner/Spinner";
-import ErrorModal from "../ErrorModal/ErrorModal";
+import toast from "react-hot-toast";
 import "./logout.css";
 
 function Logout(props) {
@@ -12,23 +12,27 @@ function Logout(props) {
     const [loading, setLoading] = useState(false);
     const [successModal, setSuccessModal] = useState(false);
     const [error, setError] = useState({ show: false, title: "", message: "" });
+    const [saving , setSaving] = useState(false);
 
     async function yesHandler() {
         try {
             setLoading(true);
+            setSaving(true);
             const res = await axios.put("http://localhost:4500/api/v1/logout", {}, { withCredentials: true });
             console.log("res received", res);
-            if (res.data.success === true) {
-                setSuccessModal(true);
-                setTimeout(() => { setUser(null); props.setLogoutClick(false); navigate("/"); }, 1000);
-            } else {
-                setError({ show: true, title: "Logout Failed", message: res.data.message });
-            }
+            setSuccessModal(true);
+            setUser(null); 
+            props.setLogoutClick(false); 
+            toast.success("Logged Out Successfully!");
+            navigate("/");
+            
         } catch(error) {
-            console.log(error?.response?.data?.message);
-            setError({ show: true, title: "Logout Error", message: error?.response?.data?.message || "Something went wrong" });
+            toast.error(error.response?.data?.message || "LogOut Failed");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     function cancelHandler() {
@@ -38,14 +42,14 @@ function Logout(props) {
     return (
         <div className="logoutOverlay">
             {loading && <Spinner />}
-            {error.show && <ErrorModal obj={error} onClose={() => setError({ show: false, title: "", message: "" })} />}
-            {successModal && <ErrorModal obj={{ title: "Logout Successful 👋", message: "You have been logged out successfully" }} onClose={() => setSuccessModal(false)} />}
+            
+        
 
             <div className="logoutBox">
                 <p className="logoutText">Are you sure you want to log out?</p>
                 <div className="logoutBtns">
-                    <button className="yesBtn" onClick={yesHandler}>Yes</button>
-                    <button className="cancelBtn" onClick={cancelHandler}>Cancel</button>
+                    <button className="yesBtn saveBtn" onClick={yesHandler}  disabled={saving}>Yes</button>
+                    <button className="cancelBtn"  onClick={cancelHandler} >Cancel</button>
                 </div>
             </div>
         </div>

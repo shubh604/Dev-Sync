@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 function Signup() {
     const [curr, setCurr] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
     const navigate = useNavigate();
+    const [saving, setSaving] = useState(false);
+
 
     function changeHandler(event) {
         setCurr((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -15,15 +17,19 @@ function Signup() {
     async function submitHandler(event) {
         event.preventDefault();
         try {
+            setSaving(true);
            
             const res = await axios.post("http://localhost:4500/api/v1/signup", curr, { withCredentials: true });
             if (res.data.success === true) {
                 toast.success("Signup Successful 🎉");
-                setTimeout(() => { navigate("/login"); }, 1000);
+                navigate("/login"); 
             } 
         } catch(error) {
             
             toast.error(error.response?.data?.message || "Signup Failed");
+        }
+        finally{
+            setSaving(false);
         }
        
     }
@@ -57,7 +63,7 @@ function Signup() {
                             <label htmlFor="id5">Confirm Password</label>
                             <input type="password" id="id5" name="confirmPassword" value={curr.confirmPassword} onChange={changeHandler} placeholder="Confirm password" />
                         </div>
-                        <button className="signupBtn">Signup</button>
+                        <button className="signupBtn saveBtn" disabled={saving}>Signup</button>
                     </form>
 
                     <div className="loginText">

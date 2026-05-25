@@ -41,6 +41,12 @@ async function updateProfileController(req,res){
                     message:"First name must contain at least 2 characters"
                 });
             }
+            if(firstName.trim().length >15){
+    return res.status(400).json({
+        success:false,
+        message:"First name cannot exceed 15 characters"
+    });
+}
             user.firstName = firstName.trim();
             console.log("updated firstname: " , user.firstName);
         }
@@ -56,16 +62,23 @@ async function updateProfileController(req,res){
                 
             }
 
+            if(lastName.trim().length > 15){
+    return res.status(400).json({
+        success:false,
+        message:"Last name cannot exceed 15 characters"
+    });
+}
+
             user.lastName = lastName.trim();
             console.log("updated LASTNAME: " , user.lastName);
         }
 
         // bio validation
         if(bio){
-            if(bio.length > 200){
+            if(bio.trim().length > 50){
                 return res.status(400).json({
                     success:false,
-                    message:"Bio cannot exceed 200 characters"
+                    message:"Bio cannot exceed 50 characters"
                 });
             }
             user.bio = bio.trim();
@@ -74,12 +87,38 @@ async function updateProfileController(req,res){
 
         // skills validation
         if(skills){
-            user.skills = skills
-                .map(skill => skill.trim())
-                .filter(skill => skill.length > 0);
 
-            console.log("updated skills: " ,user.skills);
-        }
+    if(!Array.isArray(skills)){
+        return res.status(400).json({
+            success:false,
+            message:"Skills must be an array"
+        });
+    }
+
+    if(skills.length > 5){
+        return res.status(400).json({
+            success:false,
+            message:"You can add maximum 5 skills"
+        });
+    }
+
+    const cleanedSkills = skills
+        .map(skill => skill.trim())
+        .filter(skill => skill.length > 0);
+
+    const totalLength = cleanedSkills.join("").length;
+
+    if(totalLength > 50){
+        return res.status(400).json({
+            success:false,
+            message:"Total skills length cannot exceed 50 characters"
+        });
+    }
+
+    user.skills = cleanedSkills;
+
+    console.log("updated skills: ", user.skills);
+}
 
         // profile image upload
         if(req.files && req.files.profilePic){
@@ -255,40 +294,15 @@ async function forgotPasswordController(req,res){
             to: email,
             subject: "Reset Password",
             html: `
-                <div style="font-family: Arial, sans-serif; line-height:1.6;">
-                    <h2>Password Reset Request</h2>
-
-                    <p>
-                        We received a request to reset your password.
-                    </p>
-
-                    <p>
-                        Click the button below to set a new password:
-                    </p>
-
-                    <a 
-                        href="${resetLink}"
-                        style="
-                            display:inline-block;
-                            padding:10px 18px;
-                            background-color:#2563eb;
-                            color:white;
-                            text-decoration:none;
-                            border-radius:5px;
-                            margin-top:10px;
-                        "
-                    >
-                        Reset Password
-                    </a>
-
-                    <p style="margin-top:20px;">
-                        This link will expire in 10 minutes.
-                    </p>
-
-                    <p>
-                        If you did not request a password reset, you can safely ignore this email.
-                    </p>
-                </div>
+                <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;"> 
+                <h2 style="color: #2563eb;"> Password Reset Request 🔒 </h2> 
+                <p> We received a request to reset your Dev-Sync account password. </p> 
+                <p> Click the button below to create a new password: </p>
+                 <a href="${resetLink}" style=" display: inline-block; padding: 12px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin-top: 10px; font-weight: bold; " > Reset Password </a> 
+                 <p style="margin-top: 25px;"> This password reset link will expire in <strong>10 minutes</strong>. </p> 
+                 <p> If you did not request a password reset, you can safely ignore this email. Your account will remain secure. </p> 
+                 <p style="margin-top: 30px;"> Thanks,<br/> <strong>Team Dev-Sync 💙</strong> </p> 
+                 </div>
             `
         })
 

@@ -145,31 +145,7 @@ async function removeConnection(req, res) {
     }
 }
 
-// async function getConnections(req, res) {
-//     try {
-//         const currentUser = req.user.id;
 
-//         const connections = await Connection.find({
-//             $or: [{ fromUser: currentUser }, { toUser: currentUser }],
-//             status: "accepted"
-//         }).populate("fromUser toUser", "-password");
-  
-//         const people = connections
-//     .filter(conn => conn.fromUser && conn.toUser)
-//     .map(conn =>
-//         conn.fromUser._id.toString() === currentUser.toString()
-//             ? conn.toUser
-//             : conn.fromUser
-//     );
-
-   
-        
-//         return res.status(200).json({ success: true, message: "Connections have been Fetched Successfully!", data: people });
-//     } catch(error) {
-//         console.log(error);
-//        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
-//     }
-// }
 async function getConnections(req, res) {
 
     try {
@@ -321,98 +297,6 @@ async function getFeed(req, res) {
 
     }
 }
-// async function getFeed(req, res) {
-//     try {
-//         const currentUser = req.user.id;
-
-//         const connections = await Connection.find({
-//             $or: [{ fromUser: currentUser }, { toUser: currentUser }]
-//         });
-
-//         const users = await User.find({ _id: { $ne: currentUser } }).select("-password");
-
-//         const connectionMap = new Map();
-
-//         connections.forEach((conn) => {
-//             let otherUser;
-//             let requestType;
-
-//             if (conn.fromUser.toString() === currentUser.toString()) {
-//                 otherUser = conn.toUser.toString();
-//                 requestType = "sent";
-//             } else {
-//                 otherUser = conn.fromUser.toString();
-//                 requestType = "received";
-//             }
-
-//             connectionMap.set(otherUser, { status: conn.status, requestType: requestType });
-//         });
-
-//         const feed = users.map((user) => {
-//             const connectionData = connectionMap.get(user._id.toString());
-//             let status = "none";
-//             let requestType = null;
-
-//             if (connectionData) {
-//                 status = connectionData.status;
-//                 requestType = connectionData.requestType;
-//             }
-
-//             return { ...user.toObject(), connectionStatus: status, requestType: requestType };
-//         });
-//         feed.sort(() => Math.random() - 0.5);
-//         return res.status(200).json({ success: true, message: "feed fetched successfully", data: feed });
-//     } catch(error) {
-//         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
-//     }
-// }
-
-// async function getUnreadMsg(req,res){
-//     try{
-//         const currentUser = req.user.id;
-
-// // Step 1 - connections map
-// const connections = await Connection.find({
-//     $or: [{ fromUser: currentUser }, { toUser: currentUser }],
-//     status: "accepted"
-// }).populate("fromUser toUser", "_id firstName lastName profilePic");
-
-// const connectionsMap = new Map();
-// connections.forEach((conn) => {
-//     const otherUser = conn.fromUser._id.toString() === currentUser.toString() ? conn.toUser : conn.fromUser;
-//     connectionsMap.set(otherUser._id.toString(), otherUser);
-// });
-
-// // Step 2 - unread msg count map
-// const unreadCounts = await Message.aggregate([
-//     { $match: { receiverId: currentUser, seen: false } },
-//     { $group: { _id: "$senderId", count: { $sum: 1 } } }
-// ]);
-
-// const unreadMap = new Map();
-// unreadCounts.forEach((item) => {
-//     unreadMap.set(item._id.toString(), item.count);
-// });
-
-// // Step 3 - connections pe iterate
-// const result = [];
-// connectionsMap.forEach((user, userId) => {
-//     if (unreadMap.has(userId)) {
-//         result.push({
-//             user,
-//             unreadCount: unreadMap.get(userId)
-//         });
-//     }
-// });
-
-// return res.status(200).json({ success: true,message: successfull, data: result });
-//     }
-//     catch(error){
-//         return res.status(500).json({success: false, message: "Internal server error"});
-//     }
-// }
-
-
 
 
 module.exports = { getConnections, getFeed, getsentRequest, getpendingRequest, sendRequest, acceptRequest, deleteRequest, cancelRequest, removeConnection };

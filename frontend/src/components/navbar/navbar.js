@@ -34,7 +34,7 @@ function Navbar() {
 
                 {user &&
                     <div className="mobileActions">
-                        <button className="menuBtn" onClick={toggleMenu}>☰</button>
+                   
                         <button className="profileBtn" onClick={toggleProfile}>
                             {user.profilePic
                                 ? <img src={user.profilePic} alt="Profile" className="profilePic" />
@@ -46,21 +46,21 @@ function Navbar() {
 
                 {!user
                     ? <div className="desktopLinks">
-                        <NavLink className="navLink" to="/login">Login</NavLink>
+                        <NavLink className="navLink" to="/login" >Login</NavLink>
                         <NavLink className="navLink" to="/signup">Signup</NavLink>
                     </div>
                     : <>
                         <div className="desktopLinks">
-                            <NavLink className="navLink" to="/profile/feed">Feed</NavLink>
-                            <NavLink className="navLink" to="/profile/help-hub">Help-Hub</NavLink>
-                            <NavLink className="navLink" to="/profile/connections">
+                            <NavLink className="navLink" to="/profile/feed"  onClick={closeAll}>Feed</NavLink>
+                            <NavLink className="navLink" to="/profile/help-hub"  onClick={closeAll}>Help-Hub</NavLink>
+                            <NavLink className="navLink" to="/profile/connections"  onClick={closeAll}>
                                 Connections {unreadMessages > 0 && <span className="badge1"></span>}
                             </NavLink>
-                            <NavLink className="navLink" to="/profile/requests/sent">Requests-Sent</NavLink>
-                            <NavLink className="navLink" to="/profile/requests/pending">
+                            <NavLink className="navLink" to="/profile/requests/sent"  onClick={closeAll}>Requests-Sent</NavLink>
+                            <NavLink className="navLink" to="/profile/requests/pending"  onClick={closeAll}>
                                 Requests-Received {pendingRequests > 0 && <span className="badge">{pendingRequests}</span>}
                             </NavLink>
-                            <button className="profileBtn desktopProfile" onClick={toggleProfile}>
+                            <button className="profileBtn desktopProfile" onClick={toggleProfile}  >
                                 {user.profilePic
                                     ? <img src={user.profilePic} alt="Profile" className="profilePic" />
                                     : <div className="fallbackProfile">{user.firstName?.charAt(0)?.toUpperCase()}</div>
@@ -88,6 +88,12 @@ function Navbar() {
                     </>
                 }
             </div>
+
+            {user &&
+    <div className="mobileBottomBar">
+        <button className="menuBtn" onClick={toggleMenu}>☰</button>
+    </div>
+}
 
             {logoutClick && <Logout setLogoutClick={setLogoutClick} />}
         </div>

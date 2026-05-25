@@ -1,23 +1,19 @@
 .modalOverlay{
-
     position:fixed;
 
     top:0;
-
     left:0;
 
     width:100%;
-
     height:100vh;
 
     background:rgba(15,23,42,0.45);
 
-    backdrop-filter:blur(5px);
+    backdrop-filter:blur(6px);
 
     display:flex;
 
     justify-content:center;
-
     align-items:center;
 
     padding:20px;
@@ -27,36 +23,70 @@
     box-sizing:border-box;
 }
 
-.modalContainer{
 
+.saveBtn:disabled{
+    opacity:0.7;
+
+    cursor:not-allowed;
+
+    transform:none;
+}
+.modalContainer{
     width:100%;
 
     max-width:520px;
 
-    background:white;
+    background:rgba(255,255,255,0.96);
+
+    backdrop-filter:blur(12px);
 
     border-radius:28px;
 
     padding:38px 30px;
 
-    box-shadow:0px 12px 35px rgba(0,0,0,0.18);
+    box-shadow:0px 16px 40px rgba(0,0,0,0.18);
 
     position:relative;
 
     animation:popup 0.25s ease;
+
+    box-sizing:border-box;
+
+
+    overflow:hidden;
 }
 
-.closeBtn{
+.modalContainer::before{
+
+    content:"";
 
     position:absolute;
 
-    top:18px;
+    top:0;
 
+    left:0;
+
+    width:100%;
+
+    height:7px;
+
+    background:linear-gradient(
+        90deg,
+        #7c3aed,
+        #8b5cf6,
+        #c4b5fd
+    );
+}
+
+
+.closeBtn{
+    position:absolute;
+
+    top:18px;
     right:18px;
 
-    width:38px;
-
-    height:38px;
+    width:40px;
+    height:40px;
 
     border:none;
 
@@ -67,23 +97,28 @@
     color:#4f46e5;
 
     font-size:18px;
-
     font-weight:700;
 
     cursor:pointer;
 
-    transition:0.3s;
+    transition:all 0.3s ease;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 .closeBtn:hover{
-
     background:#4f46e5;
 
     color:white;
+
+    transform:rotate(90deg);
 }
 
-.modalContainer h2{
 
+
+.modalContainer h2{
     text-align:center;
 
     font-size:34px;
@@ -93,10 +128,13 @@
     margin-bottom:28px;
 
     font-weight:800;
+
+    line-height:1.2;
 }
 
-.modalContainer form{
 
+
+.modalContainer form{
     display:flex;
 
     flex-direction:column;
@@ -104,9 +142,11 @@
     gap:18px;
 }
 
-.modalContainer input,
-.modalContainer textarea{
 
+
+.modalContainer input,
+.modalContainer textarea,
+.modalContainer select{
     width:100%;
 
     padding:15px 16px;
@@ -119,23 +159,58 @@
 
     font-size:15px;
 
-    transition:0.3s;
+    color:#111827;
+
+    background:#ffffff;
+
+    transition:all 0.3s ease;
 
     resize:none;
 
     box-sizing:border-box;
+
+    font-family:inherit;
 }
 
-.modalContainer input:focus,
-.modalContainer textarea:focus{
 
+
+.modalContainer select{
+    cursor:pointer;
+
+    appearance:none;
+
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 8 10 12 14 8'%3E%3C/polyline%3E%3C/svg%3E");
+
+    background-repeat:no-repeat;
+
+    background-position:right 14px center;
+
+    background-size:18px;
+
+    padding-right:45px;
+}
+
+
+
+.modalContainer input:focus,
+.modalContainer textarea:focus,
+.modalContainer select:focus{
     border-color:#4f46e5;
 
     box-shadow:0px 0px 0px 4px rgba(79,70,229,0.10);
 }
 
-.submitBtn{
 
+
+.modalContainer textarea{
+    min-height:130px;
+
+    line-height:1.7;
+}
+
+
+
+.submitBtn{
     border:none;
 
     background:#4f46e5;
@@ -149,21 +224,20 @@
     cursor:pointer;
 
     font-size:16px;
-
     font-weight:600;
 
-    transition:0.3s;
+    transition:all 0.3s ease;
 }
 
 .submitBtn:hover{
-
     background:#4338ca;
 
     transform:translateY(-2px);
 }
 
-.responseText{
 
+
+.responseText{
     text-align:center;
 
     margin-top:18px;
@@ -175,49 +249,78 @@
     font-weight:600;
 }
 
+
+
 @keyframes popup{
 
     from{
-
         opacity:0;
 
         transform:scale(0.92);
     }
 
     to{
-
         opacity:1;
 
         transform:scale(1);
     }
-
 }
+
+
+
+@media screen and (max-width:768px){
+
+    .modalContainer{
+        padding:34px 24px;
+
+        border-radius:24px;
+    }
+
+    .modalContainer h2{
+        font-size:30px;
+    }
+}
+
+
 
 @media screen and (max-width:480px){
 
-    .modalContainer{
+    .modalOverlay{
+        padding:14px;
+    }
 
+    .modalContainer{
         padding:30px 20px;
 
         border-radius:22px;
     }
 
     .modalContainer h2{
-
-        font-size:27px;
+        font-size:26px;
 
         margin-bottom:22px;
     }
 
     .modalContainer input,
-    .modalContainer textarea{
-
+    .modalContainer textarea,
+    .modalContainer select{
         padding:14px;
+
+        font-size:14px;
+    }
+
+    .modalContainer textarea{
+        min-height:110px;
     }
 
     .submitBtn{
-
         width:100%;
     }
 
+    .closeBtn{
+        width:36px;
+        height:36px;
+
+        font-size:16px;
+    }
 }

@@ -1,18 +1,23 @@
 .helpCard{
-
     width:100%;
 
     max-width:340px;
 
-    min-height:420px;
+    min-height:430px;
 
-    background:rgba(255,255,255,0.92);
+    background:linear-gradient(
+        135deg,
+        rgba(255,255,255,0.96),
+        rgba(248,250,252,0.96)
+    );
 
     backdrop-filter:blur(10px);
 
     border-radius:24px;
 
-    padding:30px 30px;
+    padding:30px;
+
+    padding-top:38px;
 
     box-shadow:0px 10px 30px rgba(0,0,0,0.10);
 
@@ -22,41 +27,88 @@
 
     justify-content:space-between;
 
-    gap:30px;
+    gap:22px;
 
-    transition:0.3s;
+    transition:all 0.3s ease;
 
     box-sizing:border-box;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+/* ================= TOP TAB ================= */
+
+.helpCard::before{
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:160px;
+
+    height:16px;
+
+    background:linear-gradient(
+        180deg,
+        #7c5cff,
+        #5b4cf0
+    );
+
+    border-bottom-left-radius:18px;
+
+    border-bottom-right-radius:18px;
+
+    box-shadow:
+        0px 4px 12px rgba(91,76,240,0.28);
+
+    z-index:2;
 }
 
 .helpCard:hover{
+    transform:translateY(-5px);
 
-    transform:translateY(-4px);
+    box-shadow:0px 16px 40px rgba(0,0,0,0.12);
 }
 
-.helpCardTop{
+/* ================= TOP SECTION ================= */
 
+.helpCardTop{
     display:flex;
 
     justify-content:space-between;
 
     align-items:flex-start;
 
-    gap:12px;
-}
-
-.helpUserSection{
-
-    display:flex;
-
-    align-items:flex-start;
-
     gap:14px;
 }
 
+/* ================= USER SECTION ================= */
+
+.helpUserSection{
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex:1;
+
+    min-width:0;
+
+    overflow:hidden;
+}
+
+/* ================= PROFILE ================= */
+
 .helpProfilePic,
 .helpFallback{
-
     width:62px;
 
     height:62px;
@@ -80,29 +132,44 @@
     color:#4f46e5;
 
     flex-shrink:0;
+
+    border:3px solid rgba(255,255,255,0.8);
+
+    box-shadow:0px 4px 12px rgba(0,0,0,0.06);
+}
+
+/* ================= USER INFO ================= */
+
+.helpUserInfo{
+    flex:1;
+
+    min-width:0;
+
+    overflow:hidden;
 }
 
 .helpUserInfo h3{
-
-    font-size:19px;
+    font-size:20px;
 
     color:#111827;
 
-    margin-bottom:6px;
+    line-height:1.2;
+
+    font-weight:600;
+
+    margin:0;
 }
 
-.helpUserInfo p{
+.smallName{
+    font-size:18px !important;
 
-    font-size:14px;
-
-    color:#6b7280;
-
-    line-height:22px;
+    line-height:1.2 !important;
 }
+
+/* ================= STATUS ================= */
 
 .helpStatus{
-
-    padding:7px 12px;
+    padding:8px 13px;
 
     border-radius:12px;
 
@@ -113,31 +180,55 @@
     text-transform:capitalize;
 
     white-space:nowrap;
+
+    flex-shrink:0;
+
+    align-self:flex-start;
 }
 
 .helpStatus.open{
-
     background:#dbeafe;
 
     color:#2563eb;
 }
 
-.helpStatus.in-progress{
-
+.helpStatus.active{
     background:#fef3c7;
 
     color:#d97706;
 }
 
 .helpStatus.resolved{
-
     background:#dcfce7;
 
     color:#16a34a;
 }
 
-.myHelpStatusSection{
+/* ================= BIO SECTION ================= */
 
+.helpBioSection{
+    padding-top:14px;
+
+    padding-bottom:14px;
+
+    border-top:1px solid #eef2ff;
+
+    border-bottom:1px solid #eef2ff;
+}
+
+.helpBio{
+    font-size:14px;
+
+    color:#6b7280;
+
+    line-height:24px;
+
+    word-break:break-word;
+}
+
+/* ================= MY HELP STATUS ================= */
+
+.myHelpStatusSection{
     display:flex;
 
     flex-direction:column;
@@ -146,47 +237,154 @@
 }
 
 .myHelpStatusText{
-
     font-size:14px;
 
     color:#374151;
+
+    text-align:center;
+
+    line-height:1.6;
 }
 
-.helpStatusSelect{
+/* ================= SELECT ================= */
 
+.helpStatusSelect{
     width:100%;
 
-    padding:12px 14px;
+    padding:12px 42px 12px 14px;
 
     border-radius:14px;
 
-    border:1px solid #dbeafe;
+    border:1.5px solid #dbeafe;
 
     outline:none;
 
     font-size:14px;
+
+    font-weight:500;
+
+    background-color:#ffffff;
+
+    color:#111827;
+
+    cursor:pointer;
+
+    transition:all 0.25s ease;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    -moz-appearance:none;
+
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 8 10 12 14 8'%3E%3C/polyline%3E%3C/svg%3E");
+
+    background-repeat:no-repeat;
+
+    background-position:right 14px center;
+
+    background-size:16px;
+
+    box-sizing:border-box;
+
+    box-shadow:
+        0px 2px 8px rgba(0,0,0,0.03);
+}
+
+.helpStatusSelect:hover{
+    border-color:#a5b4fc;
+
+    background-color:#f8faff;
+
+    transform:translateY(-1px);
+}
+
+.helpStatusSelect:focus{
+    border-color:#4f46e5;
+
+    box-shadow:
+        0px 0px 0px 4px rgba(79,70,229,0.10);
+
+    background-color:white;
+}
+
+.helpStatusSelect option{
+    color:#111827;
+
+    background:white;
+
+    font-size:14px;
+}
+
+/* ================= CONTENT ================= */
+
+.helpContent{
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    gap:18px;
 }
 
 .helpContent h2{
-
     font-size:24px;
 
     color:#111827;
 
-    margin-bottom:12px;
+    line-height:1.35;
+
+    word-break:break-word;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:700;
 }
 
-.helpContent p{
+/* ================= DESCRIPTION BUTTON ================= */
 
-    font-size:15px;
+.readMoreBtn{
+    border:none;
 
-    color:#6b7280;
+    background:#eef2ff;
 
-    line-height:28px;
+    color:#4f46e5;
+
+    padding:11px 18px;
+
+    border-radius:12px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:all 0.3s ease;
 }
+
+.readMoreBtn:hover{
+    background:#4f46e5;
+
+    color:white;
+
+    transform:translateY(-2px);
+}
+
+/* ================= ACTIONS ================= */
 
 .helpActions{
-
     display:flex;
 
     flex-direction:column;
@@ -194,15 +392,146 @@
     gap:14px;
 }
 
-.helpBtn{
+/* ================= BUTTONS ================= */
 
+.helpBtn{
     border:none;
 
-    padding:13px 18px;
+    padding:14px 18px;
 
-    border-radius:14px;
+    border-radius:16px;
 
     color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:all 0.3s ease;
+}
+
+.helpBtn:hover{
+    transform:translateY(-2px);
+}
+
+/* PRIMARY */
+
+.primaryBtn,
+.acceptBtn,
+.helpNowBtn{
+    background:#4f46e5;
+}
+
+.primaryBtn:hover,
+.acceptBtn:hover,
+.helpNowBtn:hover{
+    background:#4338ca;
+}
+
+/* PENDING */
+
+.pendingBtn{
+    background:#94a3b8;
+
+    cursor:not-allowed;
+}
+
+/* RESOLVED */
+
+.resolvedBtn{
+    background:#16a34a;
+
+    cursor:not-allowed;
+}
+
+/* DELETE */
+
+.deleteBtn{
+    background:#ef4444;
+}
+
+.deleteBtn:hover{
+    background:#dc2626;
+}
+
+/* ================= MODAL ================= */
+
+.modalOverlay{
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(15,23,42,0.50);
+
+    backdrop-filter:blur(6px);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:5000;
+
+    padding:20px;
+
+    box-sizing:border-box;
+}
+
+.modalBox{
+    width:100%;
+
+    max-width:540px;
+
+    background:white;
+
+    border-radius:26px;
+
+    padding:34px 28px;
+
+    box-shadow:0px 18px 45px rgba(0,0,0,0.18);
+
+    animation:popup 0.25s ease;
+
+    text-align:center;
+
+    position:relative;
+}
+
+.modalBox h2{
+    font-size:30px;
+
+    color:#111827;
+
+    margin-bottom:18px;
+
+    line-height:1.3;
+}
+
+.modalBox p{
+    font-size:15px;
+
+    color:#6b7280;
+
+    line-height:28px;
+
+    word-break:break-word;
+
+    margin-bottom:28px;
+}
+
+.modalBox button{
+    border:none;
+
+    background:#4f46e5;
+
+    color:white;
+
+    padding:13px 22px;
+
+    border-radius:14px;
 
     font-size:15px;
 
@@ -213,89 +542,141 @@
     transition:0.3s;
 }
 
-.helpBtn:hover{
+.modalBox button:hover{
+    background:#4338ca;
 
     transform:translateY(-2px);
 }
 
-.primaryBtn,
-.acceptBtn,
-.helpNowBtn{
+/* ================= ANIMATION ================= */
 
-    background:#4f46e5;
+@keyframes popup{
+
+    from{
+        opacity:0;
+
+        transform:scale(0.92);
+    }
+
+    to{
+        opacity:1;
+
+        transform:scale(1);
+    }
 }
 
-.primaryBtn:hover,
-.acceptBtn:hover,
-.helpNowBtn:hover{
-
-    background:#4338ca;
-}
-
-.pendingBtn{
-
-    background:#94a3b8;
-
-    cursor:not-allowed;
-}
-
-.resolvedBtn{
-
-    background:#16a34a;
-
-    cursor:not-allowed;
-}
-
-.deleteBtn{
-
-    background:#ef4444;
-}
-
-.deleteBtn:hover{
-
-    background:#dc2626;
-}
+/* ================= TABLET ================= */
 
 @media screen and (max-width:768px){
 
     .helpCard{
-
         max-width:100%;
     }
 
+    .modalBox{
+        max-width:100%;
+    }
+
+    .helpStatusSelect{
+        font-size:14px;
+
+        padding:12px 40px 12px 13px;
+    }
 }
+
+/* ================= MOBILE ================= */
 
 @media screen and (max-width:480px){
 
     .helpCard{
-
         padding:22px 18px;
 
+        padding-top:34px;
+
         min-height:390px;
+
+        border-radius:22px;
+    }
+
+    .helpCardTop{
+        gap:12px;
+    }
+
+    .helpProfilePic,
+    .helpFallback{
+        width:56px;
+
+        height:56px;
+
+        font-size:22px;
+    }
+
+    .helpUserInfo h3{
+        font-size:18px;
+    }
+
+    .smallName{
+        font-size:16px !important;
+    }
+
+    .helpBio{
+        font-size:13px;
+
+        line-height:21px;
     }
 
     .helpContent h2{
-
         font-size:21px;
     }
 
-    .helpContent p{
+    .helpStatus{
+        font-size:12px;
 
+        padding:6px 10px;
+    }
+
+    .helpBtn{
+        width:100%;
+    }
+
+    .helpStatusSelect{
+
+        font-size:13px;
+
+        padding:11px 38px 11px 12px;
+
+        border-radius:12px;
+
+        background-size:14px;
+
+        background-position:right 12px center;
+    }
+
+    .helpStatusSelect option{
+        font-size:13px;
+    }
+
+    .modalBox{
+        padding:28px 20px;
+
+        border-radius:22px;
+    }
+
+    .modalBox h2{
+        font-size:24px;
+    }
+
+    .modalBox p{
         font-size:14px;
 
         line-height:25px;
     }
-
-    .helpUserInfo h3{
-
-        font-size:17px;
-    }
-
 }
 
-.helpDescription{
-   display: -webkit-box;
-   -webkit-line-clamp: 1;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
+.saveBtn:disabled{
+    opacity:0.7;
+
+    cursor:not-allowed;
+
+    transform:none;
 }

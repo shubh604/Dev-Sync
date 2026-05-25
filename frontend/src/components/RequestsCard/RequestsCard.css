@@ -2,7 +2,7 @@
 
     width:100%;
 
-    min-height:100vh;
+    min-height:calc(100vh - 96px);
 
     background:linear-gradient(
         to right,
@@ -30,7 +30,7 @@
 
     font-size:44px;
 
-    font-weight:800;
+    font-weight:700;
 
     color:#111827;
 

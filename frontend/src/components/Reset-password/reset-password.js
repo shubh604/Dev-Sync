@@ -9,7 +9,9 @@ function ResetPassword() {
     const { token } = useParams();
     const [curr, setCurr] = useState({ token: token, newPassword: "", confirmPassword: "" });
     const [resetStatus, setResetStatus] = useState(false);
-    const [error, setError] = useState({ show: false, title: "", message: "" });
+
+        const [saving, setSaving] = useState(false);
+    
 
     function changeHandler(event) {
         setCurr((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -18,12 +20,16 @@ function ResetPassword() {
     async function submitHandler(event) {
         event.preventDefault();
         try {
+            setSaving(true);
             const res = await axios.post("http://localhost:4500/api/v1/reset-password", curr, { withCredentials: true });
                 setResetStatus(true);
                 toast.success("Password reset successful 🎉");
             
         } catch(error) {
             toast.error(error.response?.data?.message || "Password reset failed");
+        }
+        finally{
+            setSaving(false);
         }
     }
 
@@ -43,7 +49,7 @@ function ResetPassword() {
                         <label htmlFor="id2">Confirm Password</label>
                         <input type="password" id="id2" value={curr.confirmPassword} name="confirmPassword" onChange={changeHandler} placeholder="Confirm password" />
                     </div>
-                    <button className="resetBtn">Reset Password</button>
+                    <button className="resetBtn saveBtn" disabled={saving} >Reset Password</button>
                 </form>
 
                 {resetStatus && (

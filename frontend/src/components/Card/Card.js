@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import Spinner from "../Spinner/Spinner";
-import ErrorModal from "../ErrorModal/ErrorModal";
+
 import "./Card.css";
 import toast from "react-hot-toast";
 import socket from "../../socket";
@@ -13,11 +13,13 @@ function Card(props) {
     const [connectionStatus, setConnectionStatus] = useState(props.obj.connectionStatus);
     const [requestType, setRequestType] = useState(props.obj.requestType);
     const [error, setError] = useState({ show: false, title: "", message: "" });
+    const [saving, setSaving] = useState(false);
 
     console.log(props);
 
     async function sendRequestHandler() {
         try {
+            setSaving(true);
             setLoading(true);
             const userId = props.obj._id;
             const res = await axios.post(`http://localhost:4500/api/v1/profile/request/send/${userId}`,{},{ withCredentials: true });
@@ -31,12 +33,16 @@ function Card(props) {
         } catch(error) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     async function acceptRequestHandler() {
         try {
             setLoading(true);
+            setSaving(true);
             const res = await axios.post(`http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`,{},{ withCredentials: true });
             setConnectionStatus("accepted");
             toast.success("Request Accepted🎉")
@@ -44,7 +50,10 @@ function Card(props) {
         } catch(error) {
              toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     function editButtonHandler() {
@@ -54,6 +63,7 @@ function Card(props) {
     async function removeConnectionHandler() {
         try {
             setLoading(true);
+            setSaving(true);
             const res = await axios.delete(
                 `http://localhost:4500/api/v1/profile/connection/remove/${props.obj._id}`,
                 { withCredentials: true }
@@ -63,7 +73,10 @@ function Card(props) {
         } catch(error) {
              toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     function chatHandler() {
@@ -77,9 +90,13 @@ function Card(props) {
     return (
         <>
             {loading && <Spinner />}
-            {error.show && <ErrorModal obj={error} onClose={() => setError({ show: false, title: "", message: "" })} />}
 
-            <div className={`card ${props.buttonType === "connection" ? "connectionCard" : ""}`}>
+
+            <div className={`card 
+    ${props.buttonType === "connection" ? "connectionCard" : ""}  
+    ${props.buttonType === "Edit Profile" ? "myProfileCard" : ""}
+    ${props.buttonType === "FeedCard" ? "feedCard" : ""}
+`}>
                 <div className="cardLeft">
                     <div className="outer">
                         {props.obj.profilePic
@@ -108,9 +125,9 @@ function Card(props) {
 
                 {props.buttonType === "FeedCard" &&
                     <div className="feedBtnWrapper">
-                        {connectionStatus === "none" && <button className="btn" onClick={sendRequestHandler}>Connect</button>}
+                        {connectionStatus === "none" && <button className="btn saveBtn" onClick={sendRequestHandler}  disabled={saving}>Connect</button>}
                         {connectionStatus === "pending" && requestType === "sent" && <button className="btn" disabled>Request-Sent</button>}
-                        {connectionStatus === "pending" && requestType === "received" && <button className="btn" onClick={acceptRequestHandler}>Accept-Req</button>}
+                        {connectionStatus === "pending" && requestType === "received" && <button className="btn acceptbtn saveBtn" onClick={acceptRequestHandler} disabled={saving}>Accept-Req</button>}
                         {connectionStatus === "accepted" && <button className="btn" onClick={chatHandler1}>Dev-Chat{props.obj.messages> 0 && <span className="badge">{props.obj.messages}</span>}</button>}
                     </div>
                 }
@@ -118,7 +135,7 @@ function Card(props) {
                 {props.buttonType === "connection" &&
                     <div className="connectionButtons">
                         <button className="btn" onClick={chatHandler}>Dev-Chat{props.obj.messages> 0 && <span className="badge">{props.obj.messages}</span>}</button>
-                        <button className="btn removeBtn" onClick={removeConnectionHandler}>Remove-Connection</button>
+                        <button className="btn removeBtn saveBtn" onClick={removeConnectionHandler} disabled={saving}>Remove-Connection</button>
                     </div>
                 }
             </div>

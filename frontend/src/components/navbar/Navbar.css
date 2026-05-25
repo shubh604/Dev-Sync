@@ -1,24 +1,22 @@
 .navbar{
-
     width:100%;
+
+    position:sticky;
+    top:0;
+
+    z-index:3000;
 
     background:rgba(255,255,255,0.92);
 
     backdrop-filter:blur(10px);
 
     border-bottom:1px solid #e5e7eb;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:3000;
 }
 
+
+
 .navbarInner{
-
     width:100%;
-
     max-width:1400px;
 
     margin:0 auto;
@@ -26,9 +24,7 @@
     padding:18px 28px;
 
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
 
     box-sizing:border-box;
@@ -36,80 +32,58 @@
     position:relative;
 }
 
-.logo{
 
+
+.logo{
     text-decoration:none;
 
     font-size:44px;
-
     font-weight:800;
 
     color:#4f46e5;
 }
 
+
+
 .desktopLinks{
-
     display:flex;
-
     align-items:center;
 
     gap:24px;
 }
 
 .navLink{
+    position:relative;
 
     text-decoration:none;
 
     color:#64748b;
 
     font-size:16px;
-
     font-weight:600;
 
     transition:0.3s;
 }
 
 .navLink:hover{
-
     color:#4f46e5;
 }
 
-.mobileActions{
+/* ACTIVE LINKS */
 
-    display:none;
-
-    align-items:center;
-
-    gap:14px;
+.navLink.active,
+.mobileLink.active{
+    color:#4f46e5;
 }
 
-.menuBtn{
 
-    border:none;
-
-    background:#4f46e5;
-
-    color:white;
-
-    width:50px;
-
-    height:50px;
-
-    border-radius:14px;
-
-    font-size:24px;
-
-    cursor:pointer;
-}
 
 .profileBtn{
-
     border:none;
 
     background:#5b4bff;
 
     width:58px;
-
     height:58px;
 
     border-radius:50%;
@@ -117,18 +91,16 @@
     cursor:pointer;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
     overflow:hidden;
+
+    flex-shrink:0;
 }
 
 .profilePic{
-
     width:50px;
-
     height:50px;
 
     border-radius:50%;
@@ -139,9 +111,7 @@
 }
 
 .fallbackProfile{
-
     width:50px;
-
     height:50px;
 
     border-radius:50%;
@@ -151,47 +121,88 @@
     color:#5b4bff;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
     font-size:22px;
-
     font-weight:700;
 }
 
-.mobileActions{
 
+
+.mobileActions{
     display:none;
 
     align-items:center;
 
     gap:14px;
-
-    position:relative;
 }
 
-.mobileMenu{
 
+
+.mobileBottomBar{
+    display:none;
+
+    width:100%;
+    height:58px;
+
+    background:#4f46e5;
+
+    padding:0 18px;
+
+    box-sizing:border-box;
+
+    align-items:center;
+
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.menuBtn{
+    border:none;
+
+    background:rgba(255,255,255,0.16);
+
+    color:white;
+
+    width:40px;
+    height:40px;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    transition:0.3s;
+}
+
+.menuBtn:hover{
+    background:rgba(255,255,255,0.24);
+}
+
+
+
+.mobileMenu{
     position:absolute;
 
-    top:78px;
+    top:132px;
+    left:18px;
 
-    right:82px;
-
-    width:250px;
+    width:240px;
 
     background:white;
 
-    border-radius:24px;
+    border-radius:22px;
 
     padding:22px;
 
     box-shadow:0px 12px 35px rgba(0,0,0,0.10);
 
     display:flex;
-
     flex-direction:column;
 
     gap:18px;
@@ -202,27 +213,28 @@
 }
 
 .mobileLink{
+    position:relative;
 
     text-decoration:none;
 
     color:#475569;
 
     font-size:16px;
-
     font-weight:600;
+
+    transition:0.3s;
 }
 
 .mobileLink:hover{
-
     color:#4f46e5;
 }
 
 
-.profileDropdownWrapper{
 
+.profileDropdownWrapper{
     position:absolute;
 
-    top:78px;
+    top:32px;
 
     right:0;
 
@@ -231,111 +243,153 @@
 
 
 
+.badge{
+    position:absolute;
+
+    top:-8px;
+    right:-14px;
+
+    min-width:18px;
+    height:18px;
+
+    padding:0 5px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#ff4d4f;
+
+    color:white;
+
+    font-size:11px;
+    font-weight:600;
+
+    border-radius:999px;
+
+    line-height:1;
+
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+.badge1{
+    position:absolute;
+
+    top:-4px;
+    right:-6px;
+
+    width:12px;
+    height:12px;
+
+    background:#ff4d4f;
+
+    border-radius:50%;
+
+    border:1px solid white;
+
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+
+
 @keyframes popup{
 
     from{
-
         opacity:0;
-
         transform:translateY(-10px);
     }
 
     to{
-
         opacity:1;
-
         transform:translateY(0px);
     }
-
 }
+
+
 
 @media screen and (max-width:850px){
 
     .desktopLinks{
-
         display:none;
     }
 
     .mobileActions{
-
         display:flex;
     }
 
+    .mobileBottomBar{
+        display:flex;
+        justify-content:flex-start;
+    }
+
+    .profileDropdownWrapper{
+    position:absolute;
+
+    top:82px;
+
+    right:0;
+
+    z-index:5000;
 }
+
+}
+
+
 
 @media screen and (min-width:851px){
 
     .mobileMenu{
-
         display:none;
     }
 
+    .mobileBottomBar{
+        display:none;
+    }
 }
+
+
 
 @media screen and (max-width:480px){
 
     .navbarInner{
-
         padding:16px 18px;
     }
 
     .logo{
-
         font-size:34px;
     }
 
-    .mobileMenu{
+    .profileBtn{
+        width:52px;
+        height:52px;
+    }
 
+    .profilePic,
+    .fallbackProfile{
+        width:44px;
+        height:44px;
+    }
+
+    .mobileMenu{
         width:220px;
 
         left:14px;
+
+        top:124px;
     }
 
+    .mobileBottomBar{
+        padding:0 14px;
+    }
+
+    .profileDropdownWrapper{
+    position:absolute;
+
+    top:72px;
+
+    right:0;
+
+    z-index:5000;
 }
 
-.navLink,
-.mobileLink {
-    position: relative;
-}
-
-.badge {
-    position: absolute;
-    top: -8px;
-    right: -14px;
-
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: #ff4d4f;
-    color: white;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    border-radius: 999px;
-    line-height: 1;
-
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.badge1{
-    position: absolute;
-    top: -4px;
-    right: -6px;
-
-    width: 12px;
-    height: 12px;
-
-    background-color: #ff4d4f;
-
-    border-radius: 50%;
-
-    border: 1px solid white;
-
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }

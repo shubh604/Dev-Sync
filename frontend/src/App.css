@@ -36,3 +36,57 @@
     transform: rotate(360deg);
   }
 }
+
+.customToast{
+    font-size:16px !important;
+
+    padding:16px 20px !important;
+
+    border-radius:16px !important;
+
+    min-width:320px !important;
+
+    max-width:420px !important;
+
+    font-weight:500 !important;
+
+    background:#ffffff !important;
+
+    color:#111827 !important;
+
+    border:1px solid #e5e7eb !important;
+
+    box-shadow:0px 12px 35px rgba(0,0,0,0.12) !important;
+
+    line-height:24px !important;
+}
+
+/* TABLET */
+
+@media screen and (max-width:768px){
+
+    .customToast{
+        min-width:260px !important;
+
+        max-width:90vw !important;
+
+        font-size:15px !important;
+    }
+}
+
+/* MOBILE */
+
+@media screen and (max-width:480px){
+
+    .customToast{
+        width:calc(100vw - 24px) !important;
+
+        min-width:auto !important;
+
+        max-width:calc(100vw - 24px) !important;
+
+        font-size:14px !important;
+
+        padding:14px 16px !important;
+    }
+}

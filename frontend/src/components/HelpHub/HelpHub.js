@@ -42,7 +42,7 @@ function HelpHub() {
                     </div>
 
                     <div className="helpFeedSection">
-                        <h2 className="feedHeading">Explore Help Posts</h2>
+           
                         <div className="helpFeedContainer">
                             {helps.length > 0
                                 ? helps.map((help) => <HelpCard key={help._id} help={help} setHelps={setHelps} />)

@@ -7,7 +7,7 @@ import "./HelpModal.css";
 function HelpModal(props) {
     const [loading, setLoading] = useState(false);
     const [helpData, setHelpData] = useState({ title: "", description: "" });
-
+    const [saving , setSaving] = useState(false);
 
     function changeHandler(event) {
         const { name, value } = event.target;
@@ -17,6 +17,7 @@ function HelpModal(props) {
     async function submitHandler(event) {
         event.preventDefault();
         try {
+            setSaving(true);
             setLoading(true);
             const res = await axios.post("http://localhost:4500/api/v1/profile/help-board/create", helpData, { withCredentials: true });
             console.log(res.data);
@@ -27,7 +28,10 @@ function HelpModal(props) {
         } catch(error) {
            toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     return (
@@ -41,7 +45,7 @@ function HelpModal(props) {
                 <form onSubmit={submitHandler}>
                     <input type="text" name="title" placeholder="Enter title" value={helpData.title} onChange={changeHandler} />
                     <textarea name="description" placeholder="Describe your problem" rows="5" value={helpData.description} onChange={changeHandler} />
-                    <button type="submit" className="submitBtn">Create Post</button>
+                    <button type="submit" className="submitBtn saveBtn" disabled={saving} >Create Post</button>
                 </form>
 
             </div>

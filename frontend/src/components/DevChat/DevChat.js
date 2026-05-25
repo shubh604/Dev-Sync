@@ -4,7 +4,6 @@ import axios from "axios";
 import socket from "../../socket";
 import { AppContext } from "../../context/appContext";
 import Spinner from "../Spinner/Spinner";
-import ErrorModal from "../ErrorModal/ErrorModal";
 import "./DevChat.css";
 import toast from "react-hot-toast";
 
@@ -17,7 +16,6 @@ function DevChat() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(true);
     const [receiverStatus, setReceiverStatus] = useState("offline");
-    const [error, setError] = useState({ show: false, title: "", message: "" });
     const messagesEndRef = useRef(null);
    const sendAudioRef = useRef(new Audio("/send_sound.mp3"));
 const receiveAudioRef = useRef(new Audio("/receive_sound.mp3"));
@@ -130,7 +128,7 @@ sendAudioRef.current.play().catch((err) => {
     return (
         <div className="devChatPage">
             {loading && <Spinner />}
-            {error.show && <ErrorModal obj={error} onClose={() => setError({ show: false, title: "", message: "" })} />}
+       
 
             {!loading && (
                 <div className="chatCard">

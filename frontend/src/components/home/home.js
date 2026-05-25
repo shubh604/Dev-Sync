@@ -19,9 +19,14 @@ function Home() {
     return (
         <div className="homePage">
             <div className="heroSection">
-                <h1 className="heroHeading">Welcome to DevSync 🚀</h1>
-                <p className="heroText">Connect with developers, showcase your skills, explore opportunities, and grow together in the tech community.</p>
-                <p className="heroSubText">Build connections. Share ideas. Learn faster. Become better together 💻✨</p>
+                <h1 className="heroHeading">Welcome to DevSync </h1>
+            <p className="heroText">
+  Connect with developers, share knowledge, seek support, and grow within a collaborative tech community.
+</p>
+
+<p className="heroSubText">
+  Collaborate, learn, and build meaningful professional connections.
+</p>
                 <button className="heroBtn" onClick={onclickHandler}>Explore Feed</button>
             </div>
         </div>

@@ -9,9 +9,12 @@ function RequestCard(props) {
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(props.type === "sent");
 const [pending, setPending] = useState(props.type === "pending");
+    const [saving, setSaving] = useState(false);
+
 
     async function AcceptRequestHandler() {
         try {
+            setSaving(true);
             setLoading(true);
             const res = await axios.post(`http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`, {}, { withCredentials: true });
            
@@ -20,12 +23,16 @@ const [pending, setPending] = useState(props.type === "pending");
         } catch(error) {
              toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     async function cancelRequestHandler() {
         try {
             setLoading(true);
+            setSaving(true);
             const res = await axios.delete(`http://localhost:4500/api/v1/profile/request/cancel/${props.obj._id}`, { withCredentials: true });
             setSent(false);
             toast.success("Request Cancelled!");
@@ -36,26 +43,33 @@ const [pending, setPending] = useState(props.type === "pending");
         } catch(error) {
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     async function DeleteRequestHandler() {
         try {
             setLoading(true);
+            setSaving(true);
             const res = await axios.delete(`http://localhost:4500/api/v1/profile/request/delete/${props.obj._id}`, { withCredentials: true });
             setPending(false);
             toast.success("Request Deleted!")
         } catch(error) {
            toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        setLoading(false);
+        finally{
+            setLoading(false);
+            setSaving(false);
+        }
     }
 
     return (
         <>
             {loading && <Spinner />}
 
-            {((props.type==="sent" && sent) || (props.type==="pending" && pending)) &&
+            { ((props.type==="sent" && sent) || (props.type==="pending" && pending)) &&
 
             <div className="request-card">
                 <div className="request-left">
@@ -72,12 +86,12 @@ const [pending, setPending] = useState(props.type === "pending");
                 <div className="request-actions">
                     {pending && (
                         <>
-                            <button className="btn success-btn" onClick={AcceptRequestHandler}>Accept</button>
-                            <button className="btn danger-btn" onClick={DeleteRequestHandler}>Decline</button>
+                            <button className="btn success-btn saveBtn"  onClick={AcceptRequestHandler}  disabled={saving}>Accept</button>
+                            <button className="btn danger-btn saveBtn" onClick={DeleteRequestHandler}  disabled={saving}>Decline</button>
                         </>
                     )}
                     {sent && (
-                        <button  className="btn secondary-btn" onClick={cancelRequestHandler}>Cancel</button>
+                        <button  className="btn secondary-btn saveBtn" onClick={cancelRequestHandler}  disabled={saving}>Cancel</button>
                     )}
                 </div>
             </div>

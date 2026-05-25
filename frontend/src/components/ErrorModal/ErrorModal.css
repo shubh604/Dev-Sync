@@ -52,6 +52,32 @@
     text-align:center;
 
     animation:popup 0.25s ease;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.modalBox::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:6px;
+
+    background:linear-gradient(
+        90deg,
+        #7c3aed,
+        #8b5cf6,
+        #c4b5fd
+    );
 }
 
 .modalBox h2{
@@ -60,7 +86,7 @@
 
     color:#111827;
 
-    font-weight:800;
+    font-weight:700;
 }
 
 .modalBox p{
@@ -145,3 +171,4 @@
     }
 
 }
+

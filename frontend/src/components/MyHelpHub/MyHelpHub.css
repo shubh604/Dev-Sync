@@ -1,8 +1,7 @@
 .myHelpHubPage{
-
     width:100%;
 
-    min-height:100vh;
+    min-height:calc(100vh - 96px);
 
     background:linear-gradient(
         to right,
@@ -15,13 +14,14 @@
     box-sizing:border-box;
 }
 
-.myHelpHero{
 
+
+.myHelpHero{
     width:100%;
 
     max-width:1200px;
 
-    margin:0 auto 40px auto;
+    margin:0 auto 45px auto;
 
     background:rgba(255,255,255,0.92);
 
@@ -40,32 +40,52 @@
     align-items:center;
 
     gap:20px;
+
+    box-sizing:border-box;
+}
+
+
+.heroContent{
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
 }
 
 .heroContent h1{
-
     font-size:44px;
 
     color:#111827;
 
-    margin-bottom:14px;
+    margin:0 0 14px 0;
 
-    font-weight:800;
+    font-weight:700;
+
+    line-height:1.2;
 }
 
 .heroContent p{
-
     font-size:17px;
 
     color:#6b7280;
 
     line-height:29px;
 
+    margin:0;
+
     max-width:650px;
 }
 
-.createHelpBtn{
 
+
+.createHelpBtn{
     border:none;
 
     background:#4f46e5;
@@ -85,17 +105,19 @@
     transition:0.3s;
 
     white-space:nowrap;
+
+    flex-shrink:0;
 }
 
 .createHelpBtn:hover{
-
     background:#4338ca;
 
     transform:translateY(-2px);
 }
 
-.myPostsContainer{
 
+
+.myPostsContainer{
     width:100%;
 
     display:grid;
@@ -107,8 +129,9 @@
     gap:28px;
 }
 
-.emptyText{
 
+
+.emptyText{
     font-size:20px;
 
     color:#6b7280;
@@ -118,68 +141,82 @@
     margin-top:30px;
 }
 
+
+
 @media screen and (max-width:900px){
 
     .myHelpHero{
-
         flex-direction:column;
 
-        align-items:flex-start;
+        align-items:center;
+
+        text-align:center;
     }
 
     .heroContent h1{
-
         font-size:36px;
     }
-
 }
 
 @media screen and (max-width:768px){
 
     .myHelpHubPage{
-
         padding:25px 16px;
     }
 
-    .myPostsContainer{
+    .myHelpHero{
+        padding:30px 24px;
 
-        gap:22px;
+        border-radius:24px;
     }
 
+    .heroContent h1{
+        font-size:32px;
+    }
+
+    .heroContent p{
+        font-size:15px;
+
+        line-height:26px;
+    }
+
+    .myPostsContainer{
+        gap:22px;
+    }
 }
+
+
 
 @media screen and (max-width:480px){
 
-    .myHelpHero{
+    .myHelpHubPage{
+        padding:22px 14px;
+    }
 
-        padding:28px 22px;
+    .myHelpHero{
+        padding:28px 20px;
 
         border-radius:22px;
     }
 
     .heroContent h1{
-
         font-size:30px;
 
         line-height:40px;
     }
 
     .heroContent p{
+        font-size:14px;
 
-        font-size:15px;
-
-        line-height:25px;
+        line-height:24px;
     }
 
     .myPostsContainer{
-
         grid-template-columns:1fr;
     }
 
     .createHelpBtn{
-
         width:100%;
     }
-
 }
 

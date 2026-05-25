@@ -8,6 +8,7 @@ import "./forgot-password.css";
 function ForgotPassword() {
 
   const [curr, setCurr] = useState({ email: "" });
+  const [saving, setSaving] = useState(false);
   
 
 
@@ -18,7 +19,7 @@ function ForgotPassword() {
   async function submitHandler(event) {
     event.preventDefault();
     try {
-      
+      setSaving(true);
       const res = await axios.post(
         "http://localhost:4500/api/v1/forgot-password",
         curr,
@@ -30,6 +31,9 @@ function ForgotPassword() {
 
     } catch(error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+    finally{
+      setSaving(false);
     }
 
   }
@@ -53,7 +57,7 @@ function ForgotPassword() {
             <input type="email" id="id1" value={curr.email} name="email" onChange={changeHandler} placeholder="Enter your email" />
           </div>
 
-          <button className="resetBtn">Reset Password</button>
+          <button className="resetBtn saveBtn"  disabled={saving}>Reset Password</button>
 
         </form>
 

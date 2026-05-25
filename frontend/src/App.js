@@ -65,7 +65,12 @@ function App() {
             {!loading && (
                 <div>
                     <Navbar />
-                    <Toaster position="top-right" />
+                    <Toaster
+    position="top-right"
+    toastOptions={{
+        className: "customToast"
+    }}
+/>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />

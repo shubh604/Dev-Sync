@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 function ChangePassword() {
 
   const { user, setUser } = useContext(AppContext);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
 
@@ -26,7 +27,7 @@ function ChangePassword() {
   async function submitHandler(event) {
     event.preventDefault();
     try {
-      
+      setSaving(true);
       const res = await axios.put(
         "http://localhost:4500/api/v1/profile/change-password",
         curr,
@@ -42,6 +43,9 @@ function ChangePassword() {
     } catch(error) {
   
       toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+    finally{
+      setSaving(false);
     }
     }
     
@@ -75,7 +79,7 @@ function ChangePassword() {
             <input type="password" id="id3" name="confirmPassword" value={curr.confirmPassword} onChange={changeHandler} placeholder="Confirm password" />
           </div>
 
-          <button className="changeBtn">Change Password</button>
+          <button className="changeBtn saveBtn"  disabled={saving} >Change Password</button>
 
         </form>
 
