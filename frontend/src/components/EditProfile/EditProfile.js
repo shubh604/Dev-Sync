@@ -46,7 +46,7 @@ function EditProfile() {
    formData.append("profilePic", image);
 }
 
-      const res = await axios.put("http://localhost:4500/api/v1/profile/update",formData,{ withCredentials: true });
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/update`,formData,{ withCredentials: true });
 
       if(res.data.success === true){
         setUser(res.data.user);
@@ -58,7 +58,19 @@ function EditProfile() {
     } 
     catch(error){
 
-       toast.error(error.response?.data?.message || "Profile update failed");   
+      const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
 }
 finally{
   setSaving(false);
@@ -85,30 +97,31 @@ finally{
 
           <div className="inputGroup">
             <label>Profile Image</label>
+
             <div
-    className="dropArea"
-    onDragOver={(e) => e.preventDefault()}
-    onDrop={(e) => {
-        e.preventDefault();
-        setImage(e.dataTransfer.files[0]);
-    }}
-    onClick={() => document.getElementById("fileInput").click()}
->
-   {image 
-    ? <p>📁 {image.name}</p> 
-    : <>
-        <p>Drag & drop or click to upload</p>
-        <p className="fileText">Supported formats: .png .jpg .jpeg</p>
-      </>
-}
-    <input
-        type="file"
-        id="fileInput"
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={(e) => setImage(e.target.files[0])}
-    />
-</div>
+              className="dropArea"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                  e.preventDefault();
+                  setImage(e.dataTransfer.files[0]);
+              }}
+              onClick={() => document.getElementById("fileInput").click()}
+          >
+            {image 
+              ? <p>📁 {image.name}</p> 
+              : <>
+                  <p>Drag & drop or click to upload</p>
+                  <p className="fileText">Supported formats: .png .jpg .jpeg</p>
+                </>
+          }
+              <input
+                  type="file"
+                  id="fileInput"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => setImage(e.target.files[0])}
+              />
+          </div>
     
             
           </div>

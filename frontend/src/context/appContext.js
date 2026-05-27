@@ -24,6 +24,9 @@ function AppContextProvider({children}){
     };
 
 }, []);
+
+
+
    //---------------SENDING/PROVING THE CONTEXT TO CHILDREN----------------------------
 
     //value = kya kya cheezein provide krni h children ko 

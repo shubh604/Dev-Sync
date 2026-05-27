@@ -1,6 +1,6 @@
 .card {
     width: 100%;
-    max-width: 340px;
+    max-width: 380px;
     min-height: 430px;
     position: relative;
     overflow: hidden;
@@ -17,6 +17,8 @@
     box-sizing: border-box;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+
 
 .card:hover {
     transform: translateY(-8px);
@@ -106,6 +108,8 @@
     overflow-wrap: anywhere;
     text-align: center;
 }
+
+
 
 .bio {
     font-size: 15px;
@@ -289,14 +293,23 @@
     .connectionCard .cardContent h2 { text-align: center; }
     .connectionButtons { width: 100%; }
     .btn { width: 100%; }
+
+    
 }
 
 @media screen and (max-width: 480px) {
     .card {
-        padding: 24px 18px;
-        min-height: 400px;
-        border-radius: 22px;
+        width:100%;
+        max-width:100%;
+
+        padding:24px 18px;
+
+        min-height:400px;
+
+        border-radius:22px;
     }
+
+  
 
     .cardContent h2 { font-size: 26px; }
 
@@ -314,3 +327,4 @@
         padding: 7px 12px;
     }
 }
+

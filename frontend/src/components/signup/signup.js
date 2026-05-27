@@ -19,7 +19,7 @@ function Signup() {
         try {
             setSaving(true);
            
-            const res = await axios.post("http://localhost:4500/api/v1/signup", curr, { withCredentials: true });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/signup`, curr, { withCredentials: true });
             if (res.data.success === true) {
                 toast.success("Signup Successful 🎉");
                 navigate("/login"); 

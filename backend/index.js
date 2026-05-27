@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 
 const http = require("http");
@@ -15,7 +17,7 @@ app.use(fileUpload({useTempFiles:true,tempFileDir:"/tmp/"}));
 
 const cors = require("cors");
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 
@@ -30,13 +32,13 @@ cloudinary_connection();
 const mountRoute = require("./routes/route.js");
 app.use("/api/v1" ,mountRoute);
 
-require("dotenv").config();
+
 
 const server = http.createServer(app);
 
 const io = new Server(server,{
     cors:{
-        origin:"http://localhost:3000",
+        origin: process.env.FRONTEND_URL,
         credentials:true
     }
 });

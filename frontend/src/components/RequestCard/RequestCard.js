@@ -4,24 +4,45 @@ import Spinner from "../Spinner/Spinner";
 import toast from "react-hot-toast";
 import "./RequestCard.css";
 import socket from "../../socket";
+import { useContext } from "react";
+import { AppContext } from "../../context/appContext";
+
 
 function RequestCard(props) {
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(props.type === "sent");
-const [pending, setPending] = useState(props.type === "pending");
+    const [pending, setPending] = useState(props.type === "pending");
     const [saving, setSaving] = useState(false);
+    const {user} = useContext(AppContext);
 
 
     async function AcceptRequestHandler() {
         try {
             setSaving(true);
             setLoading(true);
-            const res = await axios.post(`http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`, {}, { withCredentials: true });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/request/accept/${props.obj._id}`, {}, { withCredentials: true });
            
             setPending(false);
             toast.success("Request Accepted!🎉")
+
+            socket.emit("request-count-change", {
+                receiverId: user._id,
+                action: "decrement"
+            });
         } catch(error) {
-             toast.error(error?.response?.data?.message || "Something went wrong");
+            const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);
@@ -33,7 +54,7 @@ const [pending, setPending] = useState(props.type === "pending");
         try {
             setLoading(true);
             setSaving(true);
-            const res = await axios.delete(`http://localhost:4500/api/v1/profile/request/cancel/${props.obj._id}`, { withCredentials: true });
+            const res = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/request/cancel/${props.obj._id}`, { withCredentials: true });
             setSent(false);
             toast.success("Request Cancelled!");
             socket.emit("request-count-change", {
@@ -41,7 +62,19 @@ const [pending, setPending] = useState(props.type === "pending");
                 action: "decrement"
             });
         } catch(error) {
-            toast.error(error?.response?.data?.message || "Something went wrong");
+            const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);
@@ -53,11 +86,28 @@ const [pending, setPending] = useState(props.type === "pending");
         try {
             setLoading(true);
             setSaving(true);
-            const res = await axios.delete(`http://localhost:4500/api/v1/profile/request/delete/${props.obj._id}`, { withCredentials: true });
+            const res = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/request/delete/${props.obj._id}`, { withCredentials: true });
             setPending(false);
-            toast.success("Request Deleted!")
+            socket.emit("request-count-change", {
+                receiverId: user._id,
+                action: "decrement"
+            });
+            toast.success("Request Deleted!");
+             
         } catch(error) {
-           toast.error(error?.response?.data?.message || "Something went wrong");
+          const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);

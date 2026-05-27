@@ -11,9 +11,6 @@ function Home() {
     function onclickHandler() {
         if(user){
             navigate("/profile/feed");
-        }else{
-            toast.error("Please login to explore the feed");
-            
         }
     }
     return (
@@ -21,13 +18,15 @@ function Home() {
             <div className="heroSection">
                 <h1 className="heroHeading">Welcome to DevSync </h1>
             <p className="heroText">
-  Connect with developers, share knowledge, seek support, and grow within a collaborative tech community.
-</p>
+                Connect with developers, share knowledge, seek support, and grow within a collaborative tech community.
+                </p>
 
-<p className="heroSubText">
-  Collaborate, learn, and build meaningful professional connections.
-</p>
-                <button className="heroBtn" onClick={onclickHandler}>Explore Feed</button>
+                <p className="heroSubText">
+                Collaborate, learn, and build meaningful professional connections.
+                </p>
+
+                {user && <button className="heroBtn" onClick={onclickHandler}>Explore Feed</button>}
+                {!user && <button className="heroBtn" onClick={() => navigate("/login")}>Get Started</button>}
             </div>
         </div>
     );

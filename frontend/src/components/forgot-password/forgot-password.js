@@ -21,7 +21,7 @@ function ForgotPassword() {
     try {
       setSaving(true);
       const res = await axios.post(
-        "http://localhost:4500/api/v1/forgot-password",
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/forgot-password`,
         curr,
         { withCredentials: true }
       );

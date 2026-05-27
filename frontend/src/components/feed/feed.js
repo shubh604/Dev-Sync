@@ -14,14 +14,26 @@ function Feed() {
     async function fetchFeed() {
       try {
         const response = await axios.get(
-          "http://localhost:4500/api/v1/profile/feed",
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/feed`,
           { withCredentials: true }
         );
         
         setPosts(response.data.data);
 
       } catch(error) {
-        toast.error(error?.response?.data?.message || "Something went wrong");
+        const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
       } finally {
         setLoading(false);
       }

@@ -6,15 +6,6 @@ import toast from "react-hot-toast";
 function ProtectedRoute({ children }) {
 
     const { user } = useContext(AppContext);
-
-    useEffect(() => {
-
-        if (!user) {
-            toast.error("Please login first");
-        }
-
-    }, [user]);
-
     if (!user) {
         return <Navigate to="/login" replace />;
     }

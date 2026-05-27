@@ -29,20 +29,23 @@ import ChangePassword from './components/ChangePassword/ChangePassword';
 import Spinner from "./components/Spinner/Spinner";
 import ErrorModal from "./components/ErrorModal/ErrorModal";
 import ProtectedRoute from './components/ProtectedRoute';
+
+import { useLocation } from 'react-router-dom';
 function App() {
 
 
     const { user, setUser } = useContext(AppContext);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({ show: false, title: "", message: "" });
-
+    const location = useLocation();
+    const hideNavbar =location.pathname.startsWith("/profile/dev-chat/");
     useEffect(() => {
         if (user) socket.emit("join", user._id);
     }, [user]);
 
     async function fetchingUser() {
         try {
-            const res = await axios.get("http://localhost:4500/api/v1/me", { withCredentials: true });
+            const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, { withCredentials: true });
             if (res.data.success === true) {
                 setUser(res.data.user);
             }
@@ -64,13 +67,8 @@ function App() {
 
             {!loading && (
                 <div>
-                    <Navbar />
-                    <Toaster
-    position="top-right"
-    toastOptions={{
-        className: "customToast"
-    }}
-/>
+                    {!hideNavbar && <Navbar />}
+                    <Toaster position="top-right" toastOptions={{className: "customToast" ,duration:1000}}/>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />

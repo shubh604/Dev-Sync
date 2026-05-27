@@ -21,7 +21,7 @@ function ResetPassword() {
         event.preventDefault();
         try {
             setSaving(true);
-            const res = await axios.post("http://localhost:4500/api/v1/reset-password", curr, { withCredentials: true });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/reset-password`, curr, { withCredentials: true });
                 setResetStatus(true);
                 toast.success("Password reset successful 🎉");
             
@@ -53,7 +53,7 @@ function ResetPassword() {
                 </form>
 
                 {resetStatus && (
-    <NavLink className="loginLink" to="/login">Go to Login →</NavLink>
+                <NavLink className="loginLink" to="/login">Go to Login →</NavLink>
 )}
             </div>
         </div>

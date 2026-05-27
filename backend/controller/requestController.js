@@ -3,13 +3,12 @@ const User = require("../model/User");
 const Message = require("../model/ChatSchema")
 const mongoose = require("mongoose");
 
-// button - send connection request
+
 async function sendRequest(req, res) {
     try {
         console.log("send request controller called");
         const fromUser = req.user.id;
         const toUser = req.params.userId;
-        console.log("Sedn req backend hit");
         if (fromUser === toUser) return res.status(400).json({ success: false, message: "You cannot send request to yourself" });
 
         const userExists = await User.findById(toUser);
@@ -24,9 +23,13 @@ async function sendRequest(req, res) {
 
         if (existingConnection) return res.status(400).json({ success: false, message: "Request already exists" });
 
+
+
         const connection = await Connection.create({ fromUser, toUser, status: "pending" });
 
-        
+        await User.findByIdAndUpdate(toUser, {
+            $inc: { pendingRequestCount: 1 }
+        });
 
         return res.status(200).json({ success: true, message: "Your request has been successfully sent!" });
     } 
@@ -35,8 +38,7 @@ async function sendRequest(req, res) {
     }
 }
 
-// button - sent requests
-// return array of people to whom requests has been sent
+
 async function getsentRequest(req, res) {
     try {
         const userId = req.user.id;
@@ -53,8 +55,8 @@ async function getsentRequest(req, res) {
     }
 }
 
-// button - pending requests
-// returns an array of people who have sent requests to the curr user
+
+
 async function getpendingRequest(req, res) {
     try {
         const currUserId = req.user.id;
@@ -71,7 +73,7 @@ async function getpendingRequest(req, res) {
     }
 }
 
-// pending requests mei jaake accept krna request ko
+
 async function acceptRequest(req, res) {
     try {
         const currentUser = req.user.id;
@@ -84,13 +86,17 @@ async function acceptRequest(req, res) {
         connection.status = "accepted";
         await connection.save();
 
+        await User.findByIdAndUpdate(currentUser, {
+            $inc: { pendingRequestCount: -1 }
+        });
+
         return res.status(200).json({ success: true, message: "Request has been accepted successfully!" });
     } catch(error) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }
 }
 
-// pending requests mei jaake delete krdi request
+
 async function deleteRequest(req, res) {
     try {
         const currentUser = req.user.id;
@@ -99,14 +105,15 @@ async function deleteRequest(req, res) {
         const connection = await Connection.findOneAndDelete({ fromUser, toUser: currentUser, status: "pending" });
 
         if (!connection) return res.status(404).json({ success: false, message: "Request not found" });
-
+        await User.findByIdAndUpdate(currentUser, {
+            $inc: { pendingRequestCount: -1 }
+        });
         return res.status(200).json({ success: true, message: "Request has been deleted successfully!" });
     } catch(error) {
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }
 }
 
-// jisne request bheji thi usne sent requests mei jaake cancel request kr diya
 async function cancelRequest(req, res) {
     try {
         const currentUser = req.user.id;
@@ -115,7 +122,10 @@ async function cancelRequest(req, res) {
         const connection = await Connection.findOneAndDelete({ fromUser: currentUser, toUser: toUser, status: "pending" });
 
         if (!connection) return res.status(404).json({ success: false, message: "Request not found" });
-
+        
+        await User.findByIdAndUpdate(toUser, {
+            $inc: { pendingRequestCount: -1 }
+        });
       
         return res.status(200).json({ success: true, message: "Request has been cancelled successfully!" });
     } catch(error) {
@@ -123,7 +133,7 @@ async function cancelRequest(req, res) {
     }
 }
 
-// koi connection h usse remove krna h
+
 async function removeConnection(req, res) {
     try {
         const currentUser = req.user.id;

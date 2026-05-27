@@ -18,16 +18,27 @@ function Logout(props) {
         try {
             setLoading(true);
             setSaving(true);
-            const res = await axios.put("http://localhost:4500/api/v1/logout", {}, { withCredentials: true });
+            const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/v1/logout`, {}, { withCredentials: true });
             console.log("res received", res);
             setSuccessModal(true);
             setUser(null); 
             props.setLogoutClick(false); 
             toast.success("Logged Out Successfully!");
-            navigate("/");
-            
+            navigate("/", { replace: true });
         } catch(error) {
-            toast.error(error.response?.data?.message || "LogOut Failed");
+            const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);

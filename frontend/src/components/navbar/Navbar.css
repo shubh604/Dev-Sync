@@ -1,13 +1,12 @@
 .navbar{
     width:100%;
-
-    position:sticky;
+    position:fixed;
     top:0;
+    left:0;
 
     z-index:3000;
 
     background:rgba(255,255,255,0.92);
-
     backdrop-filter:blur(10px);
 
     border-bottom:1px solid #e5e7eb;
@@ -18,17 +17,12 @@
 .navbarInner{
     width:100%;
     max-width:1400px;
-
     margin:0 auto;
-
     padding:18px 28px;
-
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     box-sizing:border-box;
-
     position:relative;
 }
 
@@ -36,10 +30,8 @@
 
 .logo{
     text-decoration:none;
-
     font-size:44px;
     font-weight:800;
-
     color:#4f46e5;
 }
 
@@ -48,7 +40,6 @@
 .desktopLinks{
     display:flex;
     align-items:center;
-
     gap:24px;
 }
 
@@ -56,7 +47,6 @@
     position:relative;
 
     text-decoration:none;
-
     color:#64748b;
 
     font-size:16px;
@@ -230,7 +220,9 @@
 }
 
 
-
+.mainContainer{
+    padding-top:95px;
+}
 .profileDropdownWrapper{
     position:absolute;
 
@@ -307,6 +299,10 @@
 
 
 
+/* =========================
+   TABLET + MOBILE
+========================= */
+
 @media screen and (max-width:850px){
 
     .desktopLinks{
@@ -315,81 +311,135 @@
 
     .mobileActions{
         display:flex;
+        gap:10px;
     }
 
     .mobileBottomBar{
         display:flex;
         justify-content:flex-start;
+
+        height:46px;
+        padding:0 14px;
     }
-
-    .profileDropdownWrapper{
-    position:absolute;
-
-    top:82px;
-
-    right:0;
-
-    z-index:5000;
-}
-
-}
-
-
-
-@media screen and (min-width:851px){
-
-    .mobileMenu{
-        display:none;
-    }
-
-    .mobileBottomBar{
-        display:none;
-    }
-}
-
-
-
-@media screen and (max-width:480px){
 
     .navbarInner{
-        padding:16px 18px;
+        padding:10px 16px;
+        min-height:58px;
     }
 
     .logo{
-        font-size:34px;
+        font-size:30px;
     }
 
     .profileBtn{
-        width:52px;
-        height:52px;
+        width:46px;
+        height:46px;
     }
 
     .profilePic,
     .fallbackProfile{
-        width:44px;
-        height:44px;
+        width:38px;
+        height:38px;
+    }
+
+    .menuBtn{
+        width:36px;
+        height:36px;
+
+        border-radius:10px;
+
+        font-size:18px;
     }
 
     .mobileMenu{
-        width:220px;
+        width:210px;
 
         left:14px;
+        top:88px;
 
-        top:124px;
+        padding:18px;
+
+        border-radius:18px;
+
+        gap:14px;
     }
 
-    .mobileBottomBar{
-        padding:0 14px;
+    .mobileLink{
+        font-size:15px;
     }
 
     .profileDropdownWrapper{
-    position:absolute;
+        position:absolute;
 
-    top:72px;
+        top:62px;
+        right:0;
 
-    right:0;
+        z-index:5000;
+    }
 
-    z-index:5000;
+    .mainContainer{
+        padding-top:82px;
+    }
+
 }
+
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media screen and (max-width:480px){
+
+    .navbarInner{
+        padding:8px 14px;
+        min-height:54px;
+    }
+
+    .logo{
+        font-size:26px;
+    }
+
+    .profileBtn{
+        width:42px;
+        height:42px;
+    }
+
+    .profilePic,
+    .fallbackProfile{
+        width:34px;
+        height:34px;
+    }
+
+    .menuBtn{
+        width:34px;
+        height:34px;
+
+        font-size:16px;
+    }
+
+    .mobileMenu{
+        width:200px;
+
+        left:10px;
+        top:82px;
+
+        padding:16px;
+
+        border-radius:16px;
+    }
+
+    .mobileBottomBar{
+        height:44px;
+        padding:0 12px;
+    }
+
+    .profileDropdownWrapper{
+        top:58px;
+    }
+
+    .mainContainer{
+        padding-top:76px;
+    }
 
 }

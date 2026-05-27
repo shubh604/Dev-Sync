@@ -15,10 +15,22 @@ function MyHelpHub() {
     useEffect(() => {
         async function fetchMyPosts() {
             try {
-                const response = await axios.get("http://localhost:4500/api/v1/profile/help-board/my-posts", { withCredentials: true });
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/help-board/my-posts`, { withCredentials: true });
                 setMyPosts(response.data.data);
             } catch(error) {
-                toast.error(error?.response?.data?.message || "Something went wrong");
+               const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
             } finally {
                 setLoading(false);
             }

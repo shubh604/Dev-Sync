@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import Spinner from "../Spinner/Spinner";
-
+import { useContext } from "react";
+import { AppContext } from "../../context/appContext";
 import "./Card.css";
 import toast from "react-hot-toast";
 import socket from "../../socket";
@@ -14,7 +15,7 @@ function Card(props) {
     const [requestType, setRequestType] = useState(props.obj.requestType);
     const [error, setError] = useState({ show: false, title: "", message: "" });
     const [saving, setSaving] = useState(false);
-
+    const {user} = useContext(AppContext);
     console.log(props);
 
     async function sendRequestHandler() {
@@ -22,7 +23,7 @@ function Card(props) {
             setSaving(true);
             setLoading(true);
             const userId = props.obj._id;
-            const res = await axios.post(`http://localhost:4500/api/v1/profile/request/send/${userId}`,{},{ withCredentials: true });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/request/send/${userId}`,{},{ withCredentials: true });
             setConnectionStatus("pending");
             setRequestType("sent");
             toast.success("Request sent successfully🎉")
@@ -31,7 +32,19 @@ function Card(props) {
                 action: "increment"
             });
         } catch(error) {
-            toast.error(error?.response?.data?.message || "Something went wrong");
+            const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);
@@ -43,12 +56,28 @@ function Card(props) {
         try {
             setLoading(true);
             setSaving(true);
-            const res = await axios.post(`http://localhost:4500/api/v1/profile/request/accept/${props.obj._id}`,{},{ withCredentials: true });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/request/accept/${props.obj._id}`,{},{ withCredentials: true });
             setConnectionStatus("accepted");
+            socket.emit("request-count-change", {
+                receiverId: user._id,
+                action: "decrement"
+            });
             toast.success("Request Accepted🎉")
     
         } catch(error) {
-             toast.error(error?.response?.data?.message || "Something went wrong");
+             const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);
@@ -65,13 +94,25 @@ function Card(props) {
             setLoading(true);
             setSaving(true);
             const res = await axios.delete(
-                `http://localhost:4500/api/v1/profile/connection/remove/${props.obj._id}`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/connection/remove/${props.obj._id}`,
                 { withCredentials: true }
             );
             toast.success("Connection removed!")
             props.setConnections((prev) => prev.filter((connection) => connection._id !== props.obj._id));
         } catch(error) {
-             toast.error(error?.response?.data?.message || "Something went wrong");
+            const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
         }
         finally{
             setLoading(false);
@@ -93,10 +134,10 @@ function Card(props) {
 
 
             <div className={`card 
-    ${props.buttonType === "connection" ? "connectionCard" : ""}  
-    ${props.buttonType === "Edit Profile" ? "myProfileCard" : ""}
-    ${props.buttonType === "FeedCard" ? "feedCard" : ""}
-`}>
+                    ${props.buttonType === "connection" ? "connectionCard" : ""}  
+                    ${props.buttonType === "Edit Profile" ? "myProfileCard" : ""}
+                    ${props.buttonType === "FeedCard" ? "feedCard" : ""}
+                `}>
                 <div className="cardLeft">
                     <div className="outer">
                         {props.obj.profilePic

@@ -38,55 +38,53 @@
 }
 
 .customToast{
-    font-size:16px !important;
+    font-size:14px !important;
 
-    padding:16px 20px !important;
+    padding:12px 14px !important;
 
-    border-radius:16px !important;
+    border-radius:14px !important;
 
-    min-width:320px !important;
-
-    max-width:420px !important;
+    min-width:240px !important;
+    max-width:320px !important;
 
     font-weight:500 !important;
 
     background:#ffffff !important;
-
     color:#111827 !important;
 
     border:1px solid #e5e7eb !important;
 
-    box-shadow:0px 12px 35px rgba(0,0,0,0.12) !important;
+    box-shadow:
+        0px 10px 25px rgba(0,0,0,0.10) !important;
 
-    line-height:24px !important;
+    line-height:20px !important;
 }
 
-/* TABLET */
 
 @media screen and (max-width:768px){
 
     .customToast{
         min-width:260px !important;
-
         max-width:90vw !important;
-
         font-size:15px !important;
     }
 }
 
-/* MOBILE */
-
 @media screen and (max-width:480px){
 
+    @media screen and (max-width:480px){
+
     .customToast{
-        width:calc(100vw - 24px) !important;
+        width:auto !important;
 
-        min-width:auto !important;
+        min-width:200px !important;
+        max-width:280px !important;
 
-        max-width:calc(100vw - 24px) !important;
+        font-size:13px !important;
 
-        font-size:14px !important;
+        padding:10px 12px !important;
 
-        padding:14px 16px !important;
+        border-radius:12px !important;
     }
+}
 }

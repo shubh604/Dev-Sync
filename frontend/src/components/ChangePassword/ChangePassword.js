@@ -29,7 +29,7 @@ function ChangePassword() {
     try {
       setSaving(true);
       const res = await axios.put(
-        "http://localhost:4500/api/v1/profile/change-password",
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/change-password`,
         curr,
         { withCredentials: true }
       );
@@ -42,7 +42,19 @@ function ChangePassword() {
       }
     } catch(error) {
   
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
     }
     finally{
       setSaving(false);

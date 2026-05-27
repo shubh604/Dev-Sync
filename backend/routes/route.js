@@ -41,33 +41,6 @@ router.post("/profile/help-board/update-status/:postId", authentication, helpSta
 
 router.get("/profile/dev-chat/:receiverId", authentication , ChatController);
 
-
-router.post("/profile/last-seen-update", authentication, async (req, res) => {
-
-    try {
-
-        const userId = req.user.id;
-
-        await User.findByIdAndUpdate(userId, {
-            lastSeen: new Date()
-        });
-
-        res.json({
-            success: true,
-            message: "Last seen updated",
-            lastSeen: new Date()
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            success: false,
-            message: "Error updating last seen"
-        });
-
-    }
-
-});
 router.get("/me", authentication, async(req,res)=>{
 
     try{

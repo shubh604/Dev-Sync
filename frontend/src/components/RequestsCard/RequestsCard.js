@@ -13,24 +13,29 @@ function RequestsCards(props) {
     const { user, setPendingRequests } = useContext(AppContext);
 
     useEffect(() => {
-        if (props.type === "pending") {
-            socket.emit("clear-pending-requests", user._id);
-            setPendingRequests(0);
-        }
-    }, []);
-
-    useEffect(() => {
         async function fetchRequests() {
             try {
                 let res;
                 if (props.type === "sent") {
-                    res = await axios.get("http://localhost:4500/api/v1/profile/requests/sent", { withCredentials: true });
+                    res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/requests/sent`, { withCredentials: true });
                 } else if (props.type === "pending") {
-                    res = await axios.get("http://localhost:4500/api/v1/profile/requests/pending", { withCredentials: true });
+                    res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/requests/pending`, { withCredentials: true });
                 }
                 setRequests(res.data.data);
             } catch(error) {
-                toast.error(error?.response?.data?.message || "Something went wrong");
+                const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
             } finally {
                 setLoading(false);
             }

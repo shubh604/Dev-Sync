@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/appContext";
+import {useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import Spinner from "../Spinner/Spinner";
@@ -11,21 +10,26 @@ function Connections() {
 
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AppContext);
-  const { setUnreadMessages } = useContext(AppContext);
-  const { setPendingRequests } = useContext(AppContext);
 
-  useEffect(() => {
-    socket.emit("clear-unread-messages", user._id);
-    setUnreadMessages(0);
-  }, []);
 
   async function fetchConnections() {
     try {
-      const res = await axios.get("http://localhost:4500/api/v1/profile/connections",{ withCredentials: true });
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/profile/connections`, { withCredentials: true });
       setConnections(res.data.data);
     } catch(error) {
-       toast.error(error?.response?.data?.message || "Something went wrong");
+      const message = error?.response?.data?.message;
+
+            if(
+                message === "token missing!" ||
+                message === "Token expired" ||
+                message === "Invalid token"
+            ){
+                toast.error("Please login again");
+            }
+
+            else{
+                toast.error(message || "Something went wrong");
+            }
     }
     setLoading(false);
   }

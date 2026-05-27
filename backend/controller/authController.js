@@ -178,7 +178,15 @@ async function loginController(req, res){
             const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "30d"});
             const options = {
                 expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                httpOnly: true 
+
+                httpOnly: true,
+
+                secure: process.env.NODE_ENV === "production",
+
+                sameSite:
+                    process.env.NODE_ENV === "production"
+                    ? "none"
+                    : "lax"
             };
             console.log("hii");
             frontendUser = await User.findOne({email: email.trim()}).select("-password");
