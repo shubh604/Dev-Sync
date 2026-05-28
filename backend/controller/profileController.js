@@ -257,39 +257,50 @@ async function changePasswordController(req,res){
 
 }
 
-async function forgotPasswordController(req,res){
-    try{
-        //1. fetch email
-        const {email} = req.body;
-        
-        //2. email format validation check
+async function forgotPasswordController(req, res) {
+
+    try {
+
+        // fetch email
+        const { email } = req.body;
+
+        // email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(email)){
+
+        if (!emailRegex.test(email)) {
             return res.status(400).json({
-                success:false,
-                message:"Invalid email format"
+                success: false,
+                message: "Invalid email format"
             });
         }
 
-        //3. user existence check
-        const user = await User.findOne({email});
-        if(!user){
+        // user existence check
+        const user = await User.findOne({ email });
+
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "No such user Found",
-            }
-            )
+                message: "No such user found"
+            });
         }
 
-        //4. token generate kro 
-        const payload = {id : user._id};
-        const token = jwt.sign(payload,process.env.RESET_SECRET,{expiresIn:"10m"});
+        // generate token
+        const payload = {
+            id: user._id
+        };
 
-        //5. Password reset link 
-        const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
-        console.log("Reset password mail sending service start.")
-        //6. Sending this password reset link to email id
-      
+        const token = jwt.sign(
+            payload,
+            process.env.RESET_SECRET,
+            { expiresIn: "10m" }
+        );
+
+        // reset link
+        const resetLink =
+            `${process.env.CLIENT_URL}/reset-password/${token}`;
+
+        console.log("RESET PASSWORD MAIL SEND START");
+
         try {
 
             const mailResponse =
@@ -307,8 +318,59 @@ async function forgotPasswordController(req,res){
                     subject: "Reset Password 🔒",
 
                     htmlContent: `
-                        <div>
-                            Your HTML here
+                        <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;"> 
+
+                            <h2 style="color: #2563eb;">
+                                Password Reset Request 🔒
+                            </h2> 
+
+                            <p>
+                                We received a request to reset your Dev-Sync account password.
+                            </p> 
+
+                            <p>
+                                Click the button below to create a new password:
+                            </p>
+
+                            <a 
+                                href="${resetLink}" 
+                                style="
+                                    display: inline-block;
+                                    padding: 12px 20px;
+                                    background-color: #2563eb;
+                                    color: white;
+                                    text-decoration: none;
+                                    border-radius: 6px;
+                                    margin-top: 10px;
+                                    font-weight: bold;
+                                "
+                            >
+                                Reset Password
+                            </a> 
+
+                            <p style="margin-top: 20px;">
+                                If the button doesn't work, copy and paste this link into your browser:
+                            </p>
+
+                            <p style="word-break: break-all; color:#2563eb;">
+                                ${resetLink}
+                            </p>
+
+                            <p style="margin-top: 25px;">
+                                This password reset link will expire in 
+                                <strong>10 minutes</strong>.
+                            </p> 
+
+                            <p>
+                                If you did not request a password reset,
+                                you can safely ignore this email.
+                            </p> 
+
+                            <p style="margin-top: 30px;">
+                                Thanks,<br/>
+                                <strong>Team Dev-Sync 💙</strong>
+                            </p> 
+
                         </div>
                     `
                 });
@@ -322,20 +384,24 @@ async function forgotPasswordController(req,res){
                 mailError.response?.body || mailError
             );
 
+            return res.status(500).json({
+                success: false,
+                message: "Failed to send reset password email"
+            });
         }
+
         return res.status(200).json({
             success: true,
-            message:"Reset link sent to email",
-        })
+            message: "Reset link sent to email"
+        });
 
+    } catch (error) {
 
-    }
-    catch(error){
         return res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
-        })
+        });
     }
 }
 

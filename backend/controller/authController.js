@@ -4,159 +4,170 @@ const jwt = require("jsonwebtoken");
 const apiInstance = require("../config/transporter");
 require("dotenv").config();
 
-async function signupController(req, res){
+async function signupController(req, res) {
 
-    try{
-        let {firstName, lastName, email, password, confirmPassword} = req.body;
+    try {
 
-        //empty field validation check
-        if(!firstName || !email || !password || !confirmPassword){
-            console.log("empty form");
+        let {
+            firstName,
+            lastName,
+            email,
+            password,
+            confirmPassword
+        } = req.body;
+
+        // empty validation
+        if (!firstName || !email || !password || !confirmPassword) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required except Last Name."
-            })
+            });
         }
 
-        //firstname validation
-        if(firstName){
-            if(firstName.trim().length < 2){
-                return res.status(400).json({
-                    success:false,
-                    message:"First name must contain at least 2 characters"
-                });
-            }
+        // first name validation
+        if (firstName.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: "First name must contain at least 2 characters"
+            });
         }
 
         // last name validation
-        if(lastName){
-            if(lastName.trim().length < 2){
-                return res.status(400).json({
-                    success:false,
-                    message:"Last name must contain at least 2 characters"
-                });
-            }
-        }
-        else{
-            lastName="";
+        if (lastName && lastName.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: "Last name must contain at least 2 characters"
+            });
         }
 
-        //email format validation check
+        lastName = lastName ? lastName.trim() : "";
+
+        // email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(email)){
+
+        if (!emailRegex.test(email)) {
             return res.status(400).json({
-                success:false,
-                message:"Invalid email format"
+                success: false,
+                message: "Invalid email format"
             });
         }
 
-        //password validation check
-        if(password.length < 6){
+        // password validation
+        if (password.length < 6) {
             return res.status(400).json({
-                success:false,
-                message:"Password must be of atleast 6 characters"
+                success: false,
+                message: "Password must be at least 6 characters"
             });
         }
 
-        //password and confirm password check
-        if(password !== confirmPassword){
+        // confirm password check
+        if (password !== confirmPassword) {
             return res.status(400).json({
                 success: false,
-                message: "confirm password doesn't match"
-            })
+                message: "Confirm password doesn't match"
+            });
         }
 
-        
+        // existing user check
+        const existingUser = await User.findOne({ email });
 
-        //existing user check
-        const existingUser = await User.findOne({email});
-        if(existingUser){
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: "Email id already exists!"
-            })
+                message: "Email already exists!"
+            });
         }
 
-        
-        let hashedPassword;
-        try{
-            hashedPassword = await bcrypt.hash(password.trim(),10);
-        }
-        catch(error){
+        // hash password
+        const hashedPassword = await bcrypt.hash(
+            password.trim(),
+            10
+        );
+
+        // create user
+        const user = await User.create({
+            firstName: firstName.trim(),
+            lastName,
+            email: email.trim(),
+            password: hashedPassword
+        });
+
+        console.log("MAIL SEND START");
+
+        try {
+
+            const mailResponse =
+                await apiInstance.sendTransacEmail({
+
+                    sender: {
+                        email: process.env.MAIL_USER,
+                        name: "Dev-Sync"
+                    },
+
+                    to: [
+                        { email }
+                    ],
+
+                    subject: "Welcome to Dev-Sync 🎉",
+
+                    htmlContent: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;">
+
+                            <h2 style="color: #2563eb;">
+                                Welcome to Dev-Sync 🚀
+                            </h2>
+
+                            <p>
+                                Your account has been created successfully, and we're excited to have you on board! 🎉
+                            </p>
+
+                            <p>
+                                Dev-Sync is a space where developers connect, support each other, and grow together.
+                            </p>
+
+                            <p>
+                                Start connecting, keep building, and enjoy your journey with Dev-Sync 🚀
+                            </p>
+
+                            <p style="margin-top: 30px;">
+                                Happy Coding,<br/>
+                                <strong>Team Dev-Sync 💙</strong>
+                            </p>
+
+                        </div>
+                    `
+                });
+
+            console.log("MAIL SUCCESS:", mailResponse);
+
+        } catch (mailError) {
+
+            await User.findByIdAndDelete(user._id);
+
+            console.log(
+                "MAIL ERROR:",
+                mailError.response?.body || mailError
+            );
+
             return res.status(500).json({
                 success: false,
-                message: "Error in hashing password"
+                message: "Failed to send welcome email"
             });
         }
-
-        //valid user -> create entry in db
-        const user = await User.create({firstName: firstName.trim(), lastName: lastName, email: email.trim(), password: hashedPassword});
-       console.log("MAIL SEND START");
-        const apiInstance = require("../config/brevo");
-
-try {
-
-    const mailResponse = await apiInstance.sendTransacEmail({
-        sender: {
-            email: process.env.MAIL_USER,
-            name: "Dev-Sync"
-        },
-
-        to: [
-            { email }
-        ],
-
-        subject: "Welcome to Dev-Sync 🎉",
-
-        htmlContent: `
-            <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;">
-                
-                <h2 style="color: #2563eb;">
-                    Welcome to Dev-Sync 🚀
-                </h2>
-
-                <p>
-                    Your account has been created successfully, and we're excited to have you on board! 🎉
-                </p>
-
-                <p>
-                    Dev-Sync is a space where developers connect, support each other, and grow together.
-                </p>
-
-                <p>
-                    Start connecting, keep building, and enjoy your journey with Dev-Sync 🚀
-                </p>
-
-                <p style="margin-top: 30px;">
-                    Happy Coding,<br/>
-                    <strong>Team Dev-Sync 💙</strong>
-                </p>
-
-            </div>
-        `
-    });
-
-    console.log("MAIL SUCCESS:", mailResponse);
-
-} catch (mailError) {
-
-    console.log("MAIL ERROR:", mailError.response?.body || mailError);
-
-}
 
         return res.status(201).json({
             success: true,
             message: "User signed up successfully!",
-            user : null
-        })
+            user: null
+        });
 
-    }
-    catch(error){
+    } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: "Internal Server Error!",
-            data : error
-        })
+            error: error.message
+        });
     }
 }
 
