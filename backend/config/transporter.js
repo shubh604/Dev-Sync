@@ -1,7 +1,11 @@
-const { TransactionalEmailsApi, TransactionalEmailsApiApiKeys } = require("@getbrevo/brevo");
+const brevo = require("@getbrevo/brevo");
 require("dotenv").config();
 
-const apiInstance = new TransactionalEmailsApi();
-apiInstance.setApiKey(TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+const apiInstance = new brevo.TransactionalEmailsApi();
+
+apiInstance.setApiKey(
+    brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+);
 
 module.exports = apiInstance;
