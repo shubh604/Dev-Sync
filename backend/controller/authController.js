@@ -92,7 +92,7 @@ async function signupController(req, res){
         //valid user -> create entry in db
         const user = await User.create({firstName: firstName.trim(), lastName: lastName, email: email.trim(), password: hashedPassword});
        console.log("MAIL SEND START");
-        await transporter.sendMail({
+        await transporter.emails.send({
             from: process.env.MAIL_USER,
             to: email,
             subject: "Welcome to Dev-Sync 🎉",
