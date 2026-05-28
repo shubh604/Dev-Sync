@@ -289,7 +289,7 @@ async function forgotPasswordController(req,res){
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
         console.log("Reset password mail sending service start.")
         //6. Sending this password reset link to email id
-        await transporter.emails.send({
+        await transporter.sendMail({
             from: process.env.MAIL_USER,
             to: email,
             subject: "Reset Password",

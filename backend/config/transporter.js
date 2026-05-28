@@ -1,5 +1,14 @@
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+    },
+});
 
-module.exports = resend;
+module.exports = transporter;
