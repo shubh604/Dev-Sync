@@ -21,8 +21,10 @@ app.use(cors({
     credentials: true
 }));
 
-app.get('/' , (req,res)=>console.log("Oye Welcome h ji!"));
-
+app.get("/", (req, res) => {
+    console.log("Oye Welcome h ji!");
+    res.send("Server is running");
+});
 const database_connection = require("./config/database");
 database_connection();
 
