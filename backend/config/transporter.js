@@ -1,14 +1,7 @@
-const nodemailer = require("nodemailer");
+const Brevo = require("@getbrevo/brevo");
 require("dotenv").config();
 
-const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-    },
-});
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 
-module.exports = transporter;
+module.exports = apiInstance;

@@ -93,37 +93,20 @@ async function signupController(req, res){
         const user = await User.create({firstName: firstName.trim(), lastName: lastName, email: email.trim(), password: hashedPassword});
        console.log("MAIL SEND START");
         try {
-            const mailResponse = await transporter.sendMail({
-                from: process.env.MAIL_USER,
-                to: email,
-                subject: "Welcome to Dev-Sync 🎉",
-                html: `
-                    <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;">
-
-                    <h2 style="color: #2563eb;">
-                        Welcome to Dev-Sync 🚀
-                    </h2>
-
-                    <p>
-                        Your account has been created successfully, and we're excited to have you on board! 🎉
-                    </p>
-
-                    <p>
-                        Dev-Sync is a space where developers connect, support each other, and grow together.
-                    </p>
-
-                    <p>
-                        Start connecting, keep building, and enjoy your journey with Dev-Sync 🚀
-                    </p>
-
-                    <p style="margin-top: 30px;">
-                        Happy Coding,<br/>
-                        <strong>Team Dev-Sync 💙</strong>
-                    </p>
-
+            const mailResponse = await transporter.sendTransacEmail({
+            sender: { email: process.env.MAIL_USER, name: "Dev-Sync" },
+            to: [{ email: email }],
+            subject: "Welcome to Dev-Sync 🎉",
+            htmlContent: `
+                <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;">
+                <h2 style="color: #2563eb;">Welcome to Dev-Sync 🚀</h2>
+                <p>Your account has been created successfully, and we're excited to have you on board! 🎉</p>
+                <p>Dev-Sync is a space where developers connect, support each other, and grow together.</p>
+                <p>Start connecting, keep building, and enjoy your journey with Dev-Sync 🚀</p>
+                <p style="margin-top: 30px;">Happy Coding,<br/><strong>Team Dev-Sync 💙</strong></p>
                 </div>
-                `
-            });
+            `
+        });
             console.log("MAIL SUCCESS:", mailResponse);
         } catch(mailError) {
             console.log("MAIL ERROR:", mailError);
