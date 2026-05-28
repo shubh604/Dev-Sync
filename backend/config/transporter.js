@@ -2,19 +2,26 @@ const nodeMailer = require("nodemailer");
 require("dotenv").config();
 
 
-function transporter(){
+const transporter = nodeMailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: 465,
+    secure: true,
 
-    // transporter setup
-    return nodeMailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.MAIL_USER,
-            pass: process.env.MAIL_PASS,
-        },
-    });
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+    },
+});
 
-}
+transporter.verify((error, success) => {
 
-module.exports = transporter();
+    if(error){
+        console.log("MAIL ERROR:", error);
+    }
+    else{
+        console.log("MAIL SERVER READY");
+    }
+
+});
+
+module.exports = transporter;
