@@ -10,7 +10,7 @@ const {getConnections, getFeed, getsentRequest, getpendingRequest,sendRequest,ac
 
 const {CreateHelpPost, DeleteHelpPost, GetHelpPosts, GetMyPosts , helpStatusController} = require("../controller/helpPostController");
 
-const {ChatController} = require("../controller/chatController");
+const {ChatController} = require("../controller/ChatController");
 
 router.post("/signup" , signupController);
 router.post("/login" , loginController);
