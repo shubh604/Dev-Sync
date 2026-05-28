@@ -4,8 +4,8 @@ require("dotenv").config();
 
 const transporter = nodeMailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
 
     auth: {
         user: process.env.MAIL_USER,
