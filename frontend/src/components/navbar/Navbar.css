@@ -12,13 +12,11 @@
     border-bottom:1px solid #e5e7eb;
 }
 
-
-
 .navbarInner{
     width:100%;
-    max-width:1400px;
+    max-width:1240px;
     margin:0 auto;
-    padding:18px 28px;
+    padding:10px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -26,21 +24,17 @@
     position:relative;
 }
 
-
-
 .logo{
     text-decoration:none;
-    font-size:44px;
+    font-size:34px;
     font-weight:800;
     color:#4f46e5;
 }
 
-
-
 .desktopLinks{
     display:flex;
     align-items:center;
-    gap:24px;
+    gap:18px;
 }
 
 .navLink{
@@ -49,7 +43,7 @@
     text-decoration:none;
     color:#64748b;
 
-    font-size:16px;
+    font-size:14px;
     font-weight:600;
 
     transition:0.3s;
@@ -66,15 +60,13 @@
     color:#4f46e5;
 }
 
-
-
 .profileBtn{
     border:none;
 
     background:#5b4bff;
 
-    width:58px;
-    height:58px;
+    width:46px;
+    height:46px;
 
     border-radius:50%;
 
@@ -90,8 +82,8 @@
 }
 
 .profilePic{
-    width:50px;
-    height:50px;
+    width:40px;
+    height:40px;
 
     border-radius:50%;
 
@@ -101,8 +93,8 @@
 }
 
 .fallbackProfile{
-    width:50px;
-    height:50px;
+    width:40px;
+    height:40px;
 
     border-radius:50%;
 
@@ -114,11 +106,9 @@
     justify-content:center;
     align-items:center;
 
-    font-size:22px;
+    font-size:18px;
     font-weight:700;
 }
-
-
 
 .mobileActions{
     display:none;
@@ -127,8 +117,6 @@
 
     gap:14px;
 }
-
-
 
 .mobileBottomBar{
     display:none;
@@ -174,8 +162,6 @@
     background:rgba(255,255,255,0.24);
 }
 
-
-
 .mobileMenu{
     position:absolute;
 
@@ -219,21 +205,19 @@
     color:#4f46e5;
 }
 
-
 .mainContainer{
-    padding-top:95px;
+    padding-top:76px;
 }
+
 .profileDropdownWrapper{
     position:absolute;
 
-    top:32px;
+    top:24px;
 
     right:0;
 
     z-index:5000;
 }
-
-
 
 .badge{
     position:absolute;
@@ -282,8 +266,6 @@
     box-shadow:0 2px 5px rgba(0,0,0,0.2);
 }
 
-
-
 @keyframes popup{
 
     from{
@@ -296,8 +278,6 @@
         transform:translateY(0px);
     }
 }
-
-
 
 /* =========================
    TABLET + MOBILE
@@ -355,7 +335,7 @@
         width:210px;
 
         left:14px;
-        top:88px;
+        top:98px;
 
         padding:18px;
 
@@ -380,10 +360,7 @@
     .mainContainer{
         padding-top:82px;
     }
-
 }
-
-
 
 /* =========================
    SMALL MOBILE
@@ -441,5 +418,4 @@
     .mainContainer{
         padding-top:76px;
     }
-
 }

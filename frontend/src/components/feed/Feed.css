@@ -2,9 +2,9 @@
     width: 100%;
     min-height:100vh;
     background: linear-gradient(to right, #eef2ff, #f8fafc);
-    padding: 35px 20px;
+    padding: 28px 18px;
     box-sizing: border-box;
-    padding-top: 135px;
+    padding-top: 98px;
 }
 
 .feedContainer {
@@ -12,26 +12,29 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 340px));
     justify-content: center;
-    gap: 28px;
+    gap: 24px;
 }
 
 .emptyText {
-    font-size: 20px;
+    font-size: 18px;
     color: #6b7280;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 32px;
 }
 
 @media screen and (max-width: 768px) {
+
     .feedPage {
         padding: 125px 25px 16px;
     }
+
     .feedContainer {
         gap: 22px;
     }
 }
 
 @media screen and (max-width: 480px) {
+
     .feedContainer {
         grid-template-columns: 1fr;
     }

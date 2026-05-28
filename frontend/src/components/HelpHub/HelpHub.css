@@ -4,25 +4,22 @@
 
     background: linear-gradient(to right, #eef2ff, #f8fafc);
 
-    padding: 110px 20px 35px;
+    padding: 92px 18px 28px;
     box-sizing: border-box;
-
 }
-
-
 
 .helpHeroSection {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1120px;
 
-    margin: 0 auto 40px auto;
+    margin: 0 auto 32px auto;
 
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
 
-    border-radius: 28px;
+    border-radius: 26px;
 
-    padding: 35px 32px;
+    padding: 28px 26px;
 
     box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.08);
 
@@ -30,28 +27,29 @@
     justify-content: space-between;
     align-items: center;
 
-    gap: 20px;
+    gap: 18px;
 }
+
 .heroLeft h1 {
-    font-size: 42px;
+    font-size: 36px;
     color: #111827;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .heroLeft p {
-    font-size: 17px;
+    font-size: 15px;
     color: #6b7280;
-    line-height: 29px;
-    max-width: 700px;
+    line-height: 25px;
+    max-width: 650px;
 }
 
 .myHelpBtn {
     border: none;
     background: #4f46e5;
     color: white;
-    padding: 15px 24px;
-    border-radius: 16px;
-    font-size: 15px;
+    padding: 13px 20px;
+    border-radius: 15px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     transition: 0.3s;
@@ -69,9 +67,9 @@
 
 .feedHeading {
     text-align: center;
-    font-size: 44px;
+    font-size: 38px;
     color: #111827;
-    margin-bottom: 35px;
+    margin-bottom: 28px;
     font-weight: 700;
 }
 
@@ -80,11 +78,11 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 340px));
     justify-content: center;
-    gap: 28px;
+    gap: 24px;
 }
 
 .noHelpText {
-    font-size: 20px;
+    font-size: 18px;
     color: #6b7280;
     text-align: center;
 }
@@ -94,18 +92,29 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
     .heroLeft h1 {
         font-size: 36px;
     }
 }
+@media screen and (max-width: 858px) {
 
-@media screen and (max-width: 768px) {
-    .helpHubPage {
-       padding:115px 14px 24px;
+    .feedPage {
+        padding: 125px 25px 16px;
     }
+
+    
+}
+@media screen and (max-width: 768px) {
+
+    .helpHubPage {
+       padding:125px 14px 24px;
+    }
+
     .feedHeading {
         font-size: 34px;
     }
+
     .helpFeedContainer {
         gap: 22px;
     }
@@ -121,21 +130,25 @@
         padding:24px 18px;
         border-radius:22px;
     }
-    
+
     .heroLeft h1 {
         font-size: 28px;
     }
+
     .heroLeft p {
         font-size: 15px;
         line-height: 25px;
     }
+
     .feedHeading {
         font-size: 28px;
         margin-bottom: 25px;
     }
+
     .helpFeedContainer {
         grid-template-columns: 1fr;
     }
+
     .myHelpBtn {
         width: 100%;
     }
