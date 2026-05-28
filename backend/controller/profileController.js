@@ -289,22 +289,27 @@ async function forgotPasswordController(req,res){
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
         console.log("Reset password mail sending service start.")
         //6. Sending this password reset link to email id
-        await transporter.sendMail({
-            from: process.env.MAIL_USER,
-            to: email,
-            subject: "Reset Password",
-            html: `
-                <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;"> 
-                <h2 style="color: #2563eb;"> Password Reset Request 🔒 </h2> 
-                <p> We received a request to reset your Dev-Sync account password. </p> 
-                <p> Click the button below to create a new password: </p>
-                 <a href="${resetLink}" style=" display: inline-block; padding: 12px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin-top: 10px; font-weight: bold; " > Reset Password </a> 
-                 <p style="margin-top: 25px;"> This password reset link will expire in <strong>10 minutes</strong>. </p> 
-                 <p> If you did not request a password reset, you can safely ignore this email. Your account will remain secure. </p> 
-                 <p style="margin-top: 30px;"> Thanks,<br/> <strong>Team Dev-Sync 💙</strong> </p> 
-                 </div>
-            `
-        })
+       try {
+            const mailResponse = await transporter.sendMail({
+                from: process.env.MAIL_USER,
+                to: email,
+                subject: "Reset Password",
+                html: `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #1e293b; max-width: 600px; margin: auto; padding: 20px;"> 
+                    <h2 style="color: #2563eb;"> Password Reset Request 🔒 </h2> 
+                    <p> We received a request to reset your Dev-Sync account password. </p> 
+                    <p> Click the button below to create a new password: </p>
+                    <a href="${resetLink}" style=" display: inline-block; padding: 12px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin-top: 10px; font-weight: bold; " > Reset Password </a> 
+                    <p style="margin-top: 25px;"> This password reset link will expire in <strong>10 minutes</strong>. </p> 
+                    <p> If you did not request a password reset, you can safely ignore this email. Your account will remain secure. </p> 
+                    <p style="margin-top: 30px;"> Thanks,<br/> <strong>Team Dev-Sync 💙</strong> </p> 
+                    </div>
+                `
+            });
+            console.log("MAIL SUCCESS:", mailResponse);
+        } catch(mailError) {
+            console.log("MAIL ERROR:", mailError);
+        }
 
         return res.status(200).json({
             success: true,
