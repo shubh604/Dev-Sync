@@ -15,8 +15,8 @@ const helpPostSchema = new mongoose.Schema({
         type: String,
         required: [true, "Description is required"],
         trim: true,
-        minlength: [15, "Title must contain at least 15 characters"],
-        maxlength: [500, "Title cannot exceed 500 characters"]
+        minlength: [15, "Description must contain at least 15 characters"],
+        maxlength: [500, "Description cannot exceed 500 characters"]
     },
 
     createdBy: {
