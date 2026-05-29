@@ -14,9 +14,9 @@ A full-stack developer collaboration platform built with the **MERN Stack** that
 
 ---
 
-### 🏠 Home Feed · Edit Profile · My Profile
+### 🏠 Home Page · Edit Profile · My Profile
 
-| Home Feed | Edit Profile | My Profile |
+| Home Page | Edit Profile | My Profile |
 |-----------|--------------|------------|
 | ![Home](assets/homePage.png) | ![Edit Profile](assets/editProfile.png) | ![My Profile](assets/myProfile.png) |
 
@@ -28,11 +28,15 @@ A full-stack developer collaboration platform built with the **MERN Stack** that
 
 ---
 
-### 🤝 Connections · Real-Time Chat
+### 🤝 Connections
 
-| Connections | Dev Chat |
-|-------------|----------|
-| ![Connections](assets/connections.png) | ![Dev Chat](assets/devChat.png) |
+![Connections](assets/connections.png)
+
+---
+
+### 💬 Real-Time Chat
+
+![Dev Chat](assets/devChat.png)
 
 ---
 
@@ -42,11 +46,15 @@ A full-stack developer collaboration platform built with the **MERN Stack** that
 
 ---
 
-### 🆘 Community Help Hub
+### 🆘 Help Hub
 
-| Help Hub | My Help Hub |
-|----------|-------------|
-| ![Help Hub](assets/help-hub.png) | ![My Help Hub](assets/my-help-hub.png) |
+![Help Hub](assets/help-hub.png)
+
+---
+
+### 📋 My Help Hub
+
+![My Help Hub](assets/my-help-hub.png)
 
 ---
 
@@ -129,16 +137,16 @@ DATABASE_URL=your_mongodb_connection_string
 PORT=4500
 JWT_SECRET=your_secret_key
 
-#Cloudinary
+# Cloudinary
 CLOUD_NAME=your_cloud_name
 API_KEY=your_cloud_api_key
 API_SECRET=your_cloud_api_secret
 
-#Brevo Mail
+# Brevo Mail
 MAIL_USER=your_email
 BREVO_API_KEY=your_brevo_api_key
 
-#Reset password token
+# Reset Password
 CLIENT_URL=http://localhost:3000
 RESET_SECRET=your_jwt_reset_secret_key
 
@@ -146,12 +154,13 @@ NODE_ENV=production
 FRONTEND_URL=http://localhost:3000
 ```
 
-
 Create a `.env` file inside the `frontend` directory:
+
 ```env
 REACT_APP_BACKEND_URL=http://localhost:4500
 CI=false
 ```
+
 ---
 
 ## ▶️ Run the Application
