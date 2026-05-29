@@ -87,6 +87,9 @@ Post technical help requests, offer assistance to others, and track status — O
 **Real-Time Chat**
 One-to-one messaging between connected developers powered by Socket.IO.
 
+**Notifications**
+Refresh-based notifications for connection requests and global + per-user message count badges.
+
 **Responsive Design**
 Optimized for both desktop and mobile devices with a clean, modern UI.
 
