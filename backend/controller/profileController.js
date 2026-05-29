@@ -9,166 +9,140 @@ const fs = require("fs");
 
 async function upload_file_to_cloudinary(file, folder) {
     const folder_object = {
-        folder : folder,
+        folder: folder,
         resource_type: "auto",
     };
     return await Cloudinary.uploader.upload(file.tempFilePath, folder_object);
 }
 
-async function updateProfileController(req,res){
-
-    try{
-
+async function updateProfileController(req, res) {
+    try {
         const userId = req.user.id;
-
-        const{firstName, lastName, bio}= req.body ;
+        const { firstName, lastName, bio } = req.body;
         const skills = JSON.parse(req.body.skills);
 
-        console.log("firstname: ",firstName ,"lastName: ", lastName ,"bio: ", bio ,"skills: ",skills);
+        console.log("firstname: ", firstName, "lastName: ", lastName, "bio: ", bio, "skills: ", skills);
 
         const user = await User.findById(userId);
-        if(!user){
+        if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"user not found!"
-            })
+                success: false,
+                message: "User not found"
+            });
         }
 
-        if(firstName){
-            if(firstName.trim().length < 2){
+        if (firstName !== undefined) {
+            if (firstName.trim().length === 0) {
+                user.firstName = "";
+            } else if (firstName.trim().length < 2) {
                 return res.status(400).json({
-                    success:false,
-                    message:"First name must contain at least 2 characters"
+                    success: false,
+                    message: "First name must contain at least 2 characters"
+                });
+            } else if (firstName.trim().length > 15) {
+                return res.status(400).json({
+                    success: false,
+                    message: "First name cannot exceed 15 characters"
+                });
+            } else {
+                user.firstName = firstName.trim();
+            }
+        }
+
+        if (lastName !== undefined) {
+            if (lastName.trim().length === 0) {
+                user.lastName = "";
+            } else if (lastName.trim().length < 2) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Last name must contain at least 2 characters"
+                });
+            } else if (lastName.trim().length > 15) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Last name cannot exceed 15 characters"
+                });
+            } else {
+                user.lastName = lastName.trim();
+            }
+        }
+
+        if (bio !== undefined) {
+            if (bio.trim().length === 0) {
+                user.bio = "";
+            } else if (bio.trim().length > 50) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Bio cannot exceed 50 characters"
+                });
+            } else {
+                user.bio = bio.trim();
+            }
+        }
+
+        if (skills !== undefined) {
+            if (!Array.isArray(skills)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Skills must be an array"
                 });
             }
-            if(firstName.trim().length >15){
-    return res.status(400).json({
-        success:false,
-        message:"First name cannot exceed 15 characters"
-    });
-}
-            user.firstName = firstName.trim();
-            console.log("updated firstname: " , user.firstName);
-        }
-
-        // last name validation
-        if(lastName){
-
-            if(lastName.trim().length < 2){
+            if (skills.length > 5) {
                 return res.status(400).json({
-                    success:false,
-                    message:"Last name must contain at least 2 characters"
-                });
-                
-            }
-
-            if(lastName.trim().length > 15){
-    return res.status(400).json({
-        success:false,
-        message:"Last name cannot exceed 15 characters"
-    });
-}
-
-            user.lastName = lastName.trim();
-            console.log("updated LASTNAME: " , user.lastName);
-        }
-
-        // bio validation
-        if(bio){
-            if(bio.trim().length > 50){
-                return res.status(400).json({
-                    success:false,
-                    message:"Bio cannot exceed 50 characters"
+                    success: false,
+                    message: "You can add maximum 5 skills"
                 });
             }
-            user.bio = bio.trim();
-            console.log("updated bio: " , user.bio);
+            const cleanedSkills = skills
+                .map(skill => skill.trim())
+                .filter(skill => skill.length > 0);
+
+            const totalLength = cleanedSkills.join("").length;
+            if (totalLength > 50) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Total skills length cannot exceed 50 characters"
+                });
+            }
+            user.skills = cleanedSkills;
         }
 
-        // skills validation
-        if(skills){
-
-    if(!Array.isArray(skills)){
-        return res.status(400).json({
-            success:false,
-            message:"Skills must be an array"
-        });
-    }
-
-    if(skills.length > 5){
-        return res.status(400).json({
-            success:false,
-            message:"You can add maximum 5 skills"
-        });
-    }
-
-    const cleanedSkills = skills
-        .map(skill => skill.trim())
-        .filter(skill => skill.length > 0);
-
-    const totalLength = cleanedSkills.join("").length;
-
-    if(totalLength > 50){
-        return res.status(400).json({
-            success:false,
-            message:"Total skills length cannot exceed 50 characters"
-        });
-    }
-
-    user.skills = cleanedSkills;
-
-    console.log("updated skills: ", user.skills);
-}
-
-        // profile image upload
-        if(req.files && req.files.profilePic){
-            console.log("profile");
+        if (req.files && req.files.profilePic) {
             let profilePic = req.files.profilePic;
             if (Array.isArray(profilePic)) {
-            profilePic = profilePic[0];
+                profilePic = profilePic[0];
             }
-
             const supported_types = [".jpg", ".jpeg", ".png"];
-
             const pathModule = require("path");
             const extension = pathModule.extname(profilePic.name).toLowerCase();
-
             if (!supported_types.includes(extension)) {
                 return res.status(400).json({
                     success: false,
-                    message: "Extension or File format not supported!"
+                    message: "File format not supported"
                 });
             }
-
-            // upload
             const response = await upload_file_to_cloudinary(profilePic, "Dev-Connect-Profiles");
-           
             fs.unlinkSync(profilePic.tempFilePath);
             user.profilePic = response.secure_url;
         }
 
-        // save updated user
         await user.save();
 
         const frontendUser = await User.findById(userId).select("-password");
 
         return res.status(200).json({
-            success:true,
-            message:"Changes updated successfully",
-            user : frontendUser
+            success: true,
+            message: "Profile updated successfully",
+            user: frontendUser
         });
-
     }
-    catch(error){
-
+    catch (error) {
         return res.status(500).json({
-            success:false,
-            message:"Internal server error",
-            error : error.message
+            success: false,
+            message: "Internal server error",
+            error: error.message
         });
-
     }
-
 }
 
 async function changePasswordController(req,res){
